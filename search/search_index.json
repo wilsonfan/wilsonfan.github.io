@@ -1,0 +1,1 @@
+{"config":{"lang":["en"],"separator":"[\\s\\-]+","pipeline":["stopWordFilter"]},"docs":[{"location":"","title":"index","text":"<p>this is the index</p>"},{"location":"notes/Welcome%202022/","title":"Welcome","text":"<p>This is a test of obsidian publishing 123</p>"}]}
