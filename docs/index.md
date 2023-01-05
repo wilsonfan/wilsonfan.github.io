@@ -1,9 +1,9 @@
 ---
-title: Welcome
+title: index
 feed: hide
 date: 05-01-2023
 permalink: /index
 format: list
 ---
- 
-This is a test of obsidian publishing 123
+
+this is the index
