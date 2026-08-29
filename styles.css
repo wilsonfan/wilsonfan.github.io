@@ -118,10 +118,11 @@ a:focus-visible,
 .theme-toggle {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   background: none;
   border: none;
-  padding: 0;
-  margin: 0;
+  padding: 3px;
+  margin: -3px;
   color: var(--text-muted);
   cursor: pointer;
   transition: color 0.2s ease;
@@ -445,6 +446,7 @@ main {
 .jump-nav a {
   color: var(--text-muted);
   text-decoration: none;
+  line-height: 1.75;
 }
 
 .jump-nav a:hover { color: var(--accent); }

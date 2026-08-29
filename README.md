@@ -69,7 +69,7 @@ No illustration for this recipe? Use an empty `<div class="item-list-thumb"></di
 
 ### 6. Reference / working-notes pages
 
-Not every page is a finished recipe — `sous-vide-reference.html` is a running table of time/temp trials by protein. Use `.ref-section`, `.table-wrap` + `.ref-table` for that shape instead of the ingredients/steps pattern. Keep raw trial notes (including "too raw", "try X next") rather than smoothing them into a single answer — the comparisons are the point.
+Not every page is a finished recipe — `sous-vide-reference.html` is a running table of time/temp trials by protein. Use `.ref-section`, `.table-wrap` + `.ref-table` for that shape instead of the ingredients/steps pattern. Keep raw trial notes (including "too raw", "try X next") rather than smoothing them into a single answer — the comparisons are the point. `.table-wrap` can overflow horizontally on narrow screens, so give it `tabindex="0"` (keyboard users need to be able to focus it to scroll).
 
 ## Adding a note
 
@@ -77,7 +77,7 @@ Notes live at the repo root too, linked from `notes.html`'s `.item-list` (same l
 
 - Body wrapper is `<div class="note-body">`, not `.recipe-body` — same spacing rules, just not implying "recipe."
 - Right after `<p class="section-lede">`, add `<p class="recipe-meta">Last updated <time datetime="YYYY-MM-DD">Month D, YYYY</time></p>` — keep the `datetime` and visible text in sync, and bump it whenever a note gets a substantive edit.
-- A copy-paste command, config snippet, or prompt goes in `<pre class="prompt-block"><code>...</code></pre>`.
+- A copy-paste command, config snippet, or prompt goes in `<pre class="prompt-block" tabindex="0"><code>...</code></pre>` — the `tabindex` lets keyboard users focus and scroll it when a long line overflows.
 - Standalone illustration (no ingredients list to pair it with) uses `<div class="recipe-art recipe-art-standalone">` instead of the two-column `.recipe-intro` grid.
 
 ## Theme toggle
