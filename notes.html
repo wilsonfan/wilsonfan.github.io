@@ -6,6 +6,14 @@
   <title>Notes - Wilson Fan</title>
   <meta name="description" content="Write-ups on things Wilson built, broke, and eventually understood.">
   <meta name="color-scheme" content="light dark">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
   <link rel="icon" href="at-sign.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -16,6 +24,7 @@
     <nav>
       <a href="notes.html" aria-current="page">Notes</a>
       <a href="recipes.html">Recipes</a>
+      <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode"><svg viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 3A9 9 0 0 1 12 21Z" fill="currentColor"/></svg></button>
     </nav>
   </header>
 
@@ -60,6 +69,18 @@
             <p>Authy has no export button &mdash; getting your own TOTP secrets out via iOS + mitmproxy, or a rooted Android device.</p>
           </div>
         </a>
+        <a class="item-list-row" href="bambu-lab-nfc-cloning.html">
+          <div class="item-list-thumb">
+            <picture>
+              <source srcset="bambu-lab-nfc-cloning.webp" type="image/webp">
+              <img src="bambu-lab-nfc-cloning.png" alt="" width="1056" height="992">
+            </picture>
+          </div>
+          <div>
+            <h2>Bambu Lab NFC Cloning</h2>
+            <p>Writing a spool's RFID data onto a fresh ISO14443A Gen2 tag with a Proxmark3, so a refilled spool reads as genuine.</p>
+          </div>
+        </a>
       </div>
     </section>
   </main>
@@ -69,5 +90,6 @@
   </footer>
 
   <script src="email.js"></script>
+  <script src="theme.js"></script>
 </body>
 </html>

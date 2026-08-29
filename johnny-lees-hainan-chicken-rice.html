@@ -6,6 +6,14 @@
   <title>Johnny Lee's Hainan Chicken Rice (PRD) - Wilson Fan</title>
   <meta name="description" content="Chef Johnny Lee's master-stock method for Hainan chicken, from Pearl River Deli.">
   <meta name="color-scheme" content="light dark">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("theme");
+        if (t) document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
   <link rel="icon" href="at-sign.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -16,6 +24,7 @@
     <nav>
       <a href="notes.html">Notes</a>
       <a href="recipes.html" aria-current="page">Recipes</a>
+      <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode"><svg viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 3A9 9 0 0 1 12 21Z" fill="currentColor"/></svg></button>
     </nav>
   </header>
 
@@ -102,5 +111,6 @@
   </footer>
 
   <script src="email.js"></script>
+  <script src="theme.js"></script>
 </body>
 </html>

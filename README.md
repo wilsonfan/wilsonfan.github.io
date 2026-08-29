@@ -80,6 +80,22 @@ Notes live at the repo root too, linked from `notes.html`'s `.item-list` (same l
 - A copy-paste command, config snippet, or prompt goes in `<pre class="prompt-block"><code>...</code></pre>`.
 - Standalone illustration (no ingredients list to pair it with) uses `<div class="recipe-art recipe-art-standalone">` instead of the two-column `.recipe-intro` grid.
 
+## Theme toggle
+
+Every page follows system `prefers-color-scheme` by default, with a manual override via a `data-theme="light"`/`"dark"` attribute on `<html>`, set by clicking the split-circle icon button in the nav (`theme.js`) and persisted in `localStorage`. New pages need all three pieces, copied from any existing page:
+
+1. The anti-flash inline `<script>` right after the `color-scheme` meta tag in `<head>` — applies a saved theme before first paint.
+2. The icon button as the last item inside `<nav>`:
+   ```html
+   <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+     <svg viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 3A9 9 0 0 1 12 21Z" fill="currentColor"/></svg>
+   </button>
+   ```
+   The icon itself doesn't change between modes &mdash; it's a static "toggle contrast" symbol, not a light bulb/moon pair.
+3. `<script src="theme.js"></script>` next to the `email.js` tag at the bottom of `<body>`.
+
+Anything that needs to invert between themes (line-drawing illustrations so far) should use `filter: invert(var(--invert))` rather than its own `prefers-color-scheme` media query, so it respects the manual override too.
+
 ## Style tokens
 
 Colors, spacing, and component classes (`.recipe-card`, `.recipe-body`, `.ref-table`, etc.) all live in `styles.css`. Don't hardcode colors or one-off styles in a page — add a class to `styles.css` using the existing `--bg` / `--text` / `--text-muted` / `--accent` / `--border` custom properties so light and dark mode both stay correct.

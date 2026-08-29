@@ -6,6 +6,7 @@
   --border: #e7e3df;
   --accent: #a35a0a;
   --radius: 12px;
+  --invert: 0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -16,7 +17,31 @@
     --text-muted: #a3a3a3;
     --border: #262626;
     --accent: #e0932a;
+    --invert: 1;
   }
+}
+
+/* Explicit choice from the theme toggle wins over the system preference above. */
+:root[data-theme="light"] {
+  --bg: #faf9f7;
+  --panel: #ffffff;
+  --text: #141414;
+  --text-muted: #5c5c5c;
+  --border: #e7e3df;
+  --accent: #a35a0a;
+  --invert: 0;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0d0d0d;
+  --panel: #f2f2f2;
+  --text: #f2f2f2;
+  --text-muted: #a3a3a3;
+  --border: #262626;
+  --accent: #e0932a;
+  --invert: 1;
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
@@ -28,6 +53,7 @@ html {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .nav nav a::after { transition: none; }
+  .theme-toggle { transition: none; }
 }
 
 body {
@@ -79,7 +105,8 @@ a { color: inherit; }
 .nav nav a[aria-current="page"] { color: var(--accent); }
 .nav nav a[aria-current="page"]::after { right: 0; }
 
-a:focus-visible {
+a:focus-visible,
+.theme-toggle:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: 2px;
@@ -87,6 +114,22 @@ a:focus-visible {
 
 .nav nav a:focus-visible { color: var(--accent); }
 .nav nav a:focus-visible::after { right: 0; }
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.theme-toggle svg { width: 18px; height: 18px; }
+
+.theme-toggle:hover { color: var(--accent); }
 
 main {
   max-width: 1400px;
@@ -133,10 +176,7 @@ main {
   display: block;
   width: 100%;
   height: auto;
-}
-
-@media (prefers-color-scheme: dark) {
-  .hero-art img { filter: invert(1); }
+  filter: invert(var(--invert));
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -230,10 +270,7 @@ main {
   width: 100%;
   height: 100%;
   object-fit: contain;
-}
-
-@media (prefers-color-scheme: dark) {
-  .item-list-thumb img { filter: invert(1); }
+  filter: invert(var(--invert));
 }
 
 .item-list-row:hover .item-list-thumb { border-color: var(--accent); }
@@ -294,10 +331,7 @@ main {
   display: block;
   width: 100%;
   height: auto;
-}
-
-@media (prefers-color-scheme: dark) {
-  .recipe-art img { filter: invert(1); }
+  filter: invert(var(--invert));
 }
 
 @media (max-width: 640px) {
