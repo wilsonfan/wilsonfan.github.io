@@ -246,6 +246,35 @@ main {
 
 .back-link:hover { color: var(--accent); }
 
+.recipe-intro {
+  display: grid;
+  grid-template-columns: minmax(160px, 240px) 1fr;
+  gap: 2rem;
+  align-items: start;
+  margin-bottom: 2rem;
+}
+
+.recipe-art {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.recipe-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (prefers-color-scheme: dark) {
+  .recipe-art img { filter: invert(1); }
+}
+
+@media (max-width: 640px) {
+  .recipe-intro { grid-template-columns: 1fr; }
+  .recipe-art { max-width: 220px; margin: 0 auto; }
+}
+
 .recipe-meta {
   max-width: 760px;
   color: var(--text-muted);

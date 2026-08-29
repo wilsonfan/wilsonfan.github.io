@@ -27,7 +27,26 @@ Copy an existing recipe page (`sous-vide-pork-belly.html` is the shortest) and k
 - Optional `<p class="recipe-note">...</p>` for a callout worth highlighting (a tip, a warning, a substitution).
 - If adapted from somewhere, close with `<p class="recipe-source">Source: <a href="..." target="_blank" rel="noopener">...</a></p>`.
 
-### 4. Add the card to `recipes.html`
+### 4. Optional: line-drawing illustration
+
+Recipe pages can carry a `.recipe-art` illustration between the meta line and the body, matching `wilson_burger.png`'s black ink line-drawing style (no color, no shading, no fill).
+
+- Generate with a `gemini-2.5-flash-image` (Nano Banana) call, passing `wilson_burger.png` as the style-reference image alongside a prompt describing the dish. See git history for the exact prompt template used.
+- Save as `<dish-name>.png` (same basename as the HTML file) with a transparent background — flood the near-white pixels to alpha 0 so `prefers-color-scheme: dark` can invert it cleanly (white lines on the dark page background instead of a visible white box).
+- Generate a lossless `.webp` alongside it (`cwebp -lossless -z 9 -q 80`) and serve both via `<picture>`, same pattern as the homepage hero:
+
+```html
+<div class="recipe-art">
+  <picture>
+    <source srcset="<dish-name>.webp" type="image/webp">
+    <img src="<dish-name>.png" alt="Line drawing of <dish>" width="1056" height="992">
+  </picture>
+</div>
+```
+
+Not every recipe needs one &mdash; skip it rather than force a mediocre illustration.
+
+### 5. Add the card to `recipes.html`
 
 Inside `.recipe-grid`, add:
 
@@ -38,7 +57,7 @@ Inside `.recipe-grid`, add:
 </a>
 ```
 
-### 5. Reference / working-notes pages
+### 6. Reference / working-notes pages
 
 Not every page is a finished recipe — `sous-vide-reference.html` is a running table of time/temp trials by protein. Use `.ref-section`, `.table-wrap` + `.ref-table` for that shape instead of the ingredients/steps pattern. Keep raw trial notes (including "too raw", "try X next") rather than smoothing them into a single answer — the comparisons are the point.
 
