@@ -96,6 +96,16 @@ Every page follows system `prefers-color-scheme` by default, with a manual overr
 
 Anything that needs to invert between themes (line-drawing illustrations so far) should use `filter: invert(var(--invert))` rather than its own `prefers-color-scheme` media query, so it respects the manual override too.
 
+## Analytics
+
+Cloudflare Web Analytics beacon goes last, right before `</body>`, on every page:
+
+```html
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f9013b60e7234ca594ef679765c78de0"}'></script><!-- End Cloudflare Web Analytics -->
+```
+
+Cookie-free, no consent banner needed. Doesn't require the domain's DNS to be on Cloudflare.
+
 ## Style tokens
 
 Colors, spacing, and component classes (`.recipe-card`, `.recipe-body`, `.ref-table`, etc.) all live in `styles.css`. Don't hardcode colors or one-off styles in a page — add a class to `styles.css` using the existing `--bg` / `--text` / `--text-muted` / `--accent` / `--border` custom properties so light and dark mode both stay correct.
