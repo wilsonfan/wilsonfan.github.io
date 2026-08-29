@@ -272,7 +272,11 @@ main {
 
 @media (max-width: 640px) {
   .recipe-intro { grid-template-columns: 1fr; }
-  .recipe-art { max-width: 220px; margin: 0 auto; }
+  .recipe-art {
+    max-width: min(220px, 45vw);
+    padding: 1rem;
+    margin: 0 auto;
+  }
 }
 
 .recipe-meta {
