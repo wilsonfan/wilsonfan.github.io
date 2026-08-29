@@ -46,20 +46,39 @@ Recipe pages can carry a `.recipe-art` illustration between the meta line and th
 
 Not every recipe needs one &mdash; skip it rather than force a mediocre illustration.
 
-### 5. Add the card to `recipes.html`
+### 5. Add the row to `recipes.html`
 
-Inside `.recipe-grid`, add:
+Inside `.item-list`, add:
 
 ```html
-<a class="recipe-card" href="sous-vide-<dish>.html">
-  <h2>Recipe Title</h2>
-  <p>One-sentence hook, matches the tone of the others.</p>
+<a class="item-list-row" href="sous-vide-<dish>.html">
+  <div class="item-list-thumb">
+    <picture>
+      <source srcset="<dish-name>.webp" type="image/webp">
+      <img src="<dish-name>.png" alt="" width="1056" height="992">
+    </picture>
+  </div>
+  <div>
+    <h2>Recipe Title</h2>
+    <p>One-sentence hook, matches the tone of the others.</p>
+  </div>
 </a>
 ```
+
+No illustration for this recipe? Use an empty `<div class="item-list-thumb"></div>` instead, so the title still lines up with the rows that have one.
 
 ### 6. Reference / working-notes pages
 
 Not every page is a finished recipe — `sous-vide-reference.html` is a running table of time/temp trials by protein. Use `.ref-section`, `.table-wrap` + `.ref-table` for that shape instead of the ingredients/steps pattern. Keep raw trial notes (including "too raw", "try X next") rather than smoothing them into a single answer — the comparisons are the point.
+
+## Adding a note
+
+Notes live at the repo root too, linked from `notes.html`'s `.item-list` (same list component the recipes hub uses — it's generic, not recipe-specific). Follow the recipe conventions above for file naming, page skeleton, and illustrations, with these differences:
+
+- Body wrapper is `<div class="note-body">`, not `.recipe-body` — same spacing rules, just not implying "recipe."
+- Right after `<p class="section-lede">`, add `<p class="recipe-meta">Last updated <time datetime="YYYY-MM-DD">Month D, YYYY</time></p>` — keep the `datetime` and visible text in sync, and bump it whenever a note gets a substantive edit.
+- A copy-paste command, config snippet, or prompt goes in `<pre class="prompt-block"><code>...</code></pre>`.
+- Standalone illustration (no ingredients list to pair it with) uses `<div class="recipe-art recipe-art-standalone">` instead of the two-column `.recipe-intro` grid.
 
 ## Style tokens
 

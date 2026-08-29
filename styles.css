@@ -193,13 +193,13 @@ main {
   margin-top: 0.35rem;
 }
 
-.recipe-list {
+.item-list {
   display: flex;
   flex-direction: column;
   margin-bottom: 1rem;
 }
 
-.recipe-list-item {
+.item-list-row {
   display: flex;
   align-items: center;
   gap: 1.25rem;
@@ -209,10 +209,10 @@ main {
   color: var(--text);
 }
 
-.recipe-list-item:first-child { padding-top: 0; }
-.recipe-list-item:last-child { border-bottom: none; }
+.item-list-row:first-child { padding-top: 0; }
+.item-list-row:last-child { border-bottom: none; }
 
-.recipe-list-thumb {
+.item-list-thumb {
   flex: 0 0 auto;
   width: 88px;
   height: 88px;
@@ -225,7 +225,7 @@ main {
   transition: border-color 0.2s ease;
 }
 
-.recipe-list-thumb img {
+.item-list-thumb img {
   display: block;
   width: 100%;
   height: 100%;
@@ -233,10 +233,10 @@ main {
 }
 
 @media (prefers-color-scheme: dark) {
-  .recipe-list-thumb img { filter: invert(1); }
+  .item-list-thumb img { filter: invert(1); }
 }
 
-.recipe-list-item:hover .recipe-list-thumb { border-color: var(--accent); }
+.item-list-row:hover .item-list-thumb { border-color: var(--accent); }
 
 .card-tag {
   display: inline-block;
@@ -248,14 +248,14 @@ main {
   letter-spacing: 0.05em;
 }
 
-.recipe-list-item h2 {
+.item-list-row h2 {
   margin: 0 0 0.35rem;
   font-size: 1.1rem;
 }
 
-.recipe-list-item:hover h2 { color: var(--accent); }
+.item-list-row:hover h2 { color: var(--accent); }
 
-.recipe-list-item p {
+.item-list-row p {
   margin: 0;
   color: var(--text-muted);
   font-size: 0.92rem;
@@ -283,6 +283,11 @@ main {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1.25rem;
+}
+
+.recipe-art-standalone {
+  max-width: 240px;
+  margin-bottom: 2rem;
 }
 
 .recipe-art img {
@@ -341,6 +346,43 @@ main {
   padding: 0.25rem 0 0.25rem 1rem;
   color: var(--text-muted);
   font-size: 0.92rem;
+}
+
+.note-body {
+  max-width: 760px;
+}
+
+.note-body h2 {
+  font-size: 1.15rem;
+  margin: 2rem 0 0.75rem;
+}
+
+.note-body h2:first-child { margin-top: 0; }
+
+.note-body p { line-height: 1.6; }
+
+.note-body ol,
+.note-body ul {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+}
+
+.note-body li { margin-bottom: 0.4rem; }
+
+.prompt-block {
+  margin: 0 0 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+.prompt-block code {
+  display: block;
+  white-space: pre-wrap;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
 }
 
 .recipe-source {
