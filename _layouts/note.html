@@ -8,12 +8,17 @@ layout: default
   <p class="recipe-meta">Last updated <time datetime="{{ page.updated }}">{{ page.updated | date: "%B %-d, %Y" }}</time></p>
 
   {% assign slug = page.url | remove: '/' | remove: '.html' %}
-  <div class="recipe-art recipe-art-standalone">
-    <picture>
-      <source srcset="{{ '/images/' | append: slug | append: '.webp' | relative_url }}" type="image/webp">
-      <img src="{{ '/images/' | append: slug | append: '.png' | relative_url }}" alt="{{ page.thumb_alt }}" width="1056" height="992">
-    </picture>
-  </div>
+  <div class="note-body">
+    <div class="recipe-intro">
+      <div class="recipe-art">
+        <picture>
+          <source srcset="{{ '/images/' | append: slug | append: '.webp' | relative_url }}" type="image/webp">
+          <img src="{{ '/images/' | append: slug | append: '.png' | relative_url }}" alt="{{ page.thumb_alt }}" width="1056" height="992">
+        </picture>
+      </div>
+      <p>{{ page.intro }}</p>
+    </div>
 
-  {{ content }}
+    {{ content }}
+  </div>
 </section>

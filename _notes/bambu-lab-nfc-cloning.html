@@ -6,10 +6,8 @@ updated: 2026-08-30
 order: 4
 thumb_alt: "Line drawing of a handheld RFID reader scanning a coin-shaped tag"
 hub_blurb: "Writing a spool's RFID data onto a fresh ISO14443A Gen2 tag with a Proxmark3, so a refilled spool reads as genuine."
+intro: "Every Bambu Lab spool has a Mifare 13.56 MHz tag glued to it, and the AMS reads it to identify material, color, and remaining length. Clone that tag onto a new card and glue it to a refilled spool (or a compatible third-party one) and the AMS treats it exactly like genuine Bambu filament."
 ---
-<div class="note-body">
-  <p>Every Bambu Lab spool has a Mifare 13.56 MHz tag glued to it, and the AMS reads it to identify material, color, and remaining length. Clone that tag onto a new card and glue it to a refilled spool (or a compatible third-party one) and the AMS treats it exactly like genuine Bambu filament.</p>
-
   <h2>Background</h2>
   <p>Two community projects do the heavy lifting here:</p>
   <ul>
@@ -34,4 +32,3 @@ hub_blurb: "Writing a spool's RFID data onto a fresh ISO14443A Gen2 tag with a P
   <p class="recipe-note">The <code>--force</code> flag is what lets the Proxmark3 overwrite block 0 (the UID) on a Gen2 tag &mdash; without it, the write only touches the data blocks and the UID stays mismatched, which fails the signature check.</p>
 
   <p>Once it's written, tap the tag against the Proxmark3 and run <code>hf mf info</code> to confirm the UID and data match the original dump before gluing it to a spool.</p>
-</div>

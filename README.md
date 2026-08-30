@@ -86,16 +86,17 @@ description: "<one-sentence meta description>"
 lede: "<one or two sentence summary, shown as the section lede>"
 updated: 2026-08-30
 order: 5
-thumb_alt: "<alt text for the standalone illustration>"
+thumb_alt: "<alt text for the illustration>"
 hub_blurb: "<one-sentence hook shown on the notes.html row>"
+intro: "<opening paragraph, shown beside the illustration>"
 ---
-<div class="note-body">
+  <h2>First section</h2>
   ...
-</div>
 ```
 
 - `layout: note` and `nav: notes` come from `_config.yml` collection defaults.
-- The `note` layout renders the standalone illustration (`.recipe-art.recipe-art-standalone`) and the "Last updated" line automatically from `thumb_alt`/`updated` &mdash; don't add them by hand in the body.
+- The `note` layout renders the illustration beside the `intro` paragraph (same `.recipe-intro` pairing recipes use) and the "Last updated" line automatically from `thumb_alt`/`updated`/`intro` &mdash; don't repeat any of them in the body, and don't add your own `.note-body` wrapper, the layout provides it.
+- Body content starts at the first `<h2>` &mdash; the opening paragraph lives in `intro` instead.
 - Bump `updated` (and keep it an actual `YYYY-MM-DD` value, quotes optional) whenever a note gets a substantive edit.
 - A copy-paste command, config snippet, or prompt goes in `<pre class="prompt-block" tabindex="0"><code>...</code></pre>` &mdash; the `tabindex` lets keyboard users focus and scroll it when a long line overflows.
 

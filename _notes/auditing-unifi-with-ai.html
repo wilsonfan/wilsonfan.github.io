@@ -6,10 +6,8 @@ updated: 2026-08-30
 order: 1
 thumb_alt: "Line drawing of a wireless access point being inspected with a magnifying glass"
 hub_blurb: "A copy-paste prompt for pointing an AI agent at a UniFi controller's API and getting a prioritized network audit back."
+intro: "UniFi's controller exposes a proper API, and Ubiquiti publishes an onboarding doc written specifically for AI agents. Between the two, you can hand an agent read access and a task instead of clicking through every settings tab yourself. The prompt below is the one I use to get a security/performance/topology pass on a site."
 ---
-<div class="note-body">
-  <p>UniFi's controller exposes a proper API, and Ubiquiti publishes an onboarding doc written specifically for AI agents. Between the two, you can hand an agent read access and a task instead of clicking through every settings tab yourself. The prompt below is the one I use to get a security/performance/topology pass on a site.</p>
-
   <h2>Getting an API key</h2>
   <ol>
     <li>Open a web browser and log into your Local Portal by typing your UniFi gateway's IP address (e.g. <code>192.168.1.1</code>).</li>
@@ -43,4 +41,3 @@ Structure your response into:
     <li>A read-only API key is enough for the audit itself &mdash; only widen scope if you also want the agent to apply fixes.</li>
     <li>The linked getting-started doc is what teaches the agent the actual endpoint shapes, so don't skip having it fetch that first.</li>
   </ul>
-</div>
