@@ -10,11 +10,12 @@ nav: notes
   <div class="item-list">
     {% assign items = site.notes | sort: "order" %}
     {% for item in items %}
+    {% assign slug = item.url | remove: '/' | remove: '.html' %}
     <a class="item-list-row" href="{{ item.url | relative_url }}">
       <div class="item-list-thumb">
         <picture>
-          <source srcset="{{ item.url | remove: '.html' | append: '.webp' | relative_url }}" type="image/webp">
-          <img src="{{ item.url | remove: '.html' | append: '.png' | relative_url }}" alt="" width="1056" height="992">
+          <source srcset="{{ '/images/' | append: slug | append: '.webp' | relative_url }}" type="image/webp">
+          <img src="{{ '/images/' | append: slug | append: '.png' | relative_url }}" alt="" width="1056" height="992">
         </picture>
       </div>
       <div>

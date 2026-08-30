@@ -7,10 +7,11 @@ layout: default
   <p class="section-lede">{{ page.lede }}</p>
   <p class="recipe-meta">Last updated <time datetime="{{ page.updated }}">{{ page.updated | date: "%B %-d, %Y" }}</time></p>
 
+  {% assign slug = page.url | remove: '/' | remove: '.html' %}
   <div class="recipe-art recipe-art-standalone">
     <picture>
-      <source srcset="{{ page.url | remove: '.html' | append: '.webp' | relative_url }}" type="image/webp">
-      <img src="{{ page.url | remove: '.html' | append: '.png' | relative_url }}" alt="{{ page.thumb_alt }}" width="1056" height="992">
+      <source srcset="{{ '/images/' | append: slug | append: '.webp' | relative_url }}" type="image/webp">
+      <img src="{{ '/images/' | append: slug | append: '.png' | relative_url }}" alt="{{ page.thumb_alt }}" width="1056" height="992">
     </picture>
   </div>
 

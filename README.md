@@ -1,6 +1,6 @@
 # wilson.fan
 
-Jekyll site, built by GitHub Pages directly from `master` &mdash; no CI, no Actions workflow. `styles.css`, `theme.js`, `email.js`, and images are plain static files at the repo root, unprocessed by Jekyll.
+Jekyll site, built by GitHub Pages directly from `master` &mdash; no CI, no Actions workflow. `styles.css`, `theme.js`, and `email.js` are plain static files at the repo root, unprocessed by Jekyll. Illustrations live under `images/`.
 
 ## Local preview
 
@@ -45,22 +45,22 @@ Everything after the front matter is raw HTML (no Markdown conversion happens on
 
 ### 4. Optional: line-drawing illustration
 
-Recipe pages can carry a `.recipe-art` illustration inside `.recipe-intro`, matching `wilson_burger.png`'s black ink line-drawing style (no color, no shading, no fill).
+Recipe pages can carry a `.recipe-art` illustration inside `.recipe-intro`, matching `images/wilson_burger.png`'s black ink line-drawing style (no color, no shading, no fill).
 
-- Generate with a `gemini-2.5-flash-image` (Nano Banana) call, passing `wilson_burger.png` as the style-reference image alongside a prompt describing the dish. See git history for the exact prompt template used.
-- Save as `<dish-name>.png` at the repo root (same basename as the collection file) with a transparent background &mdash; flood the near-white pixels to alpha 0 so dark mode can invert it cleanly (white lines on the dark page background instead of a visible white box).
+- Generate with a `gemini-2.5-flash-image` (Nano Banana) call, passing `images/wilson_burger.png` as the style-reference image alongside a prompt describing the dish. See git history for the exact prompt template used.
+- Save as `images/<dish-name>.png` (same basename as the collection file) with a transparent background &mdash; flood the near-white pixels to alpha 0 so dark mode can invert it cleanly (white lines on the dark page background instead of a visible white box).
 - Generate a lossless `.webp` alongside it (`cwebp -lossless -z 9 -q 80`) and serve both via `<picture>`, same pattern as the homepage hero:
 
 ```html
 <div class="recipe-art">
   <picture>
-    <source srcset="<dish-name>.webp" type="image/webp">
-    <img src="<dish-name>.png" alt="Line drawing of <dish>" width="1056" height="992">
+    <source srcset="/images/<dish-name>.webp" type="image/webp">
+    <img src="/images/<dish-name>.png" alt="Line drawing of <dish>" width="1056" height="992">
   </picture>
 </div>
 ```
 
-Every recipe currently has one, and the `recipes.html`/`notes.html` hub loops assume `<slug>.png`/`.webp` exist at the root. If a future recipe skips the illustration, add an `{% if %}` around the hub-row `<picture>` (falling back to an empty `<div class="item-list-thumb"></div>`) rather than forcing a mediocre image.
+Every recipe currently has one, and the `recipes.html`/`notes.html` hub loops assume `images/<slug>.png`/`.webp` exist. If a future recipe skips the illustration, add an `{% if %}` around the hub-row `<picture>` (falling back to an empty `<div class="item-list-thumb"></div>`) rather than forcing a mediocre image.
 
 ### 5. Reference / working-notes pages
 
