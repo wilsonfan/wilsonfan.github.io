@@ -5,6 +5,9 @@ url: "https://wilson.fan"
 markdown: kramdown
 permalink: /:path.html
 
+plugins:
+  - jekyll-sitemap
+
 collections:
   recipes:
     output: true
