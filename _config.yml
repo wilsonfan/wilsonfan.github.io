@@ -1,0 +1,34 @@
+title: Wilson Fan
+description: "Wilson Fan. Notes on software, and recipes worth repeating."
+url: "https://wilson.fan"
+
+markdown: kramdown
+permalink: /:path.html
+
+collections:
+  recipes:
+    output: true
+    permalink: /:path.html
+  notes:
+    output: true
+    permalink: /:path.html
+
+defaults:
+  - scope:
+      path: ""
+      type: recipes
+    values:
+      layout: recipe
+      nav: recipes
+  - scope:
+      path: ""
+      type: notes
+    values:
+      layout: note
+      nav: notes
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor

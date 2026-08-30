@@ -1,122 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Recipes - Wilson Fan</title>
-  <meta name="description" content="Dishes worth cooking twice, written down so Wilson stops losing them.">
-  <meta name="color-scheme" content="light dark">
-  <script>
-    (function () {
-      try {
-        var t = localStorage.getItem("theme");
-        if (t) document.documentElement.setAttribute("data-theme", t);
-      } catch (e) {}
-    })();
-  </script>
-  <link rel="icon" href="at-sign.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-  <header class="nav">
-    <a href="index.html" class="wordmark">Wilson Fan</a>
-    <nav>
-      <a href="notes.html">Notes</a>
-      <a href="recipes.html" aria-current="page">Recipes</a>
-      <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode"><svg viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 3A9 9 0 0 1 12 21Z" fill="currentColor"/></svg></button>
-    </nav>
-  </header>
-
-  <main>
-    <section class="stack-section page-section">
-      <h1>Recipes</h1>
-      <p class="section-lede">Dishes worth cooking twice, written down so I stop losing them.</p>
-      <div class="item-list">
-        <a class="item-list-row" href="sous-vide-pork-belly.html">
-          <div class="item-list-thumb">
-            <picture>
-              <source srcset="sous-vide-pork-belly.webp" type="image/webp">
-              <img src="sous-vide-pork-belly.png" alt="" width="1056" height="992">
-            </picture>
-          </div>
-          <div>
-            <h2>Crispy Sous Vide Pork Belly</h2>
-            <p>Air-dried skin, 16 hours low and slow, then blistered in a hot oven.</p>
-          </div>
-        </a>
-        <a class="item-list-row" href="sous-vide-poached-pears.html">
-          <div class="item-list-thumb">
-            <picture>
-              <source srcset="sous-vide-poached-pears.webp" type="image/webp">
-              <img src="sous-vide-poached-pears.png" alt="" width="1056" height="992">
-            </picture>
-          </div>
-          <div>
-            <h2>Sous Vide Poached Pears</h2>
-            <p>Bourbon caramel, vanilla, and star anise. From <em>Sous Vide at Home</em>.</p>
-          </div>
-        </a>
-        <a class="item-list-row" href="sous-vide-reference.html">
-          <div class="item-list-thumb">
-            <picture>
-              <source srcset="sous-vide-reference.webp" type="image/webp">
-              <img src="sous-vide-reference.png" alt="" width="1056" height="992">
-            </picture>
-          </div>
-          <div>
-            <span class="card-tag">Reference</span>
-            <h2>Sous Vide Time &amp; Temperature Reference</h2>
-            <p>Working notes on times and temps for chicken, beef, lamb, duck, and more.</p>
-          </div>
-        </a>
-        <a class="item-list-row" href="johnny-lees-hainan-chicken-rice.html">
-          <div class="item-list-thumb">
-            <picture>
-              <source srcset="johnny-lees-hainan-chicken-rice.webp" type="image/webp">
-              <img src="johnny-lees-hainan-chicken-rice.png" alt="" width="1056" height="992">
-            </picture>
-          </div>
-          <div>
-            <h2>Johnny Lee's Hainan Chicken Rice (PRD)</h2>
-            <p>Master-stock poaching, flushing, and temperature timing from Pearl River Deli.</p>
-          </div>
-        </a>
-        <a class="item-list-row" href="emperor-chicken-buk-jum-gai.html">
-          <div class="item-list-thumb">
-            <picture>
-              <source srcset="emperor-chicken-buk-jum-gai.webp" type="image/webp">
-              <img src="emperor-chicken-buk-jum-gai.png" alt="" width="1056" height="992">
-            </picture>
-          </div>
-          <div>
-            <h2>Emperor Chicken &mdash; Buk Jum Gai</h2>
-            <p>Sylvia Gee's whole poached salted ginger chicken.</p>
-          </div>
-        </a>
-        <a class="item-list-row" href="ginger-scallion-dipping-sauce.html">
-          <div class="item-list-thumb">
-            <picture>
-              <source srcset="ginger-scallion-dipping-sauce.webp" type="image/webp">
-              <img src="ginger-scallion-dipping-sauce.png" alt="" width="1056" height="992">
-            </picture>
-          </div>
-          <div>
-            <span class="card-tag">Sauce</span>
-            <h2>Ginger Scallion Dipping Sauce</h2>
-            <p>The classic accompaniment for Hainan chicken and steamboat.</p>
-          </div>
-        </a>
+---
+layout: default
+title: "Recipes"
+description: "Dishes worth cooking twice, written down so Wilson stops losing them."
+nav: recipes
+---
+<section class="stack-section page-section">
+  <h1>Recipes</h1>
+  <p class="section-lede">Dishes worth cooking twice, written down so I stop losing them.</p>
+  <div class="item-list">
+    {% assign items = site.recipes | sort: "order" %}
+    {% for item in items %}
+    <a class="item-list-row" href="{{ item.url | relative_url }}">
+      <div class="item-list-thumb">
+        <picture>
+          <source srcset="{{ item.url | remove: '.html' | append: '.webp' | relative_url }}" type="image/webp">
+          <img src="{{ item.url | remove: '.html' | append: '.png' | relative_url }}" alt="" width="1056" height="992">
+        </picture>
       </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <p>&copy; 2026 Wilson Fan &middot; <a href="#" data-email>Email</a></p>
-  </footer>
-
-  <script src="email.js"></script>
-  <script src="theme.js"></script>
-  <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f9013b60e7234ca594ef679765c78de0"}'></script><!-- End Cloudflare Web Analytics -->
-</body>
-</html>
+      <div>
+        {% if item.tag %}<span class="card-tag">{{ item.tag }}</span>{% endif %}
+        <h2>{{ item.title }}</h2>
+        <p>{{ item.hub_blurb }}</p>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>

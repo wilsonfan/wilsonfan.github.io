@@ -1,52 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Wilson Fan</title>
-  <meta name="description" content="Wilson Fan. Notes on software, and recipes worth repeating.">
-  <meta name="color-scheme" content="light dark">
-  <script>
-    (function () {
-      try {
-        var t = localStorage.getItem("theme");
-        if (t) document.documentElement.setAttribute("data-theme", t);
-      } catch (e) {}
-    })();
-  </script>
-  <link rel="icon" href="at-sign.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-  <header class="nav">
-    <a href="index.html" class="wordmark">Wilson Fan</a>
-    <nav>
-      <a href="notes.html">Notes</a>
-      <a href="recipes.html">Recipes</a>
-      <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode"><svg viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 3A9 9 0 0 1 12 21Z" fill="currentColor"/></svg></button>
-    </nav>
-  </header>
-
-  <main>
-    <section class="hero">
-      <h1>I write code and cook<br><em>obsessively</em>.</h1>
-      <div class="hero-art">
-        <picture>
-          <source srcset="wilson_burger.webp" type="image/webp">
-          <img src="wilson_burger.png" alt="Line drawing of Wilson mid-bite into a burger" width="900" height="880">
-        </picture>
-      </div>
-      <p>Technical notes from building software, and recipes that actually get repeated at home.</p>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <p>&copy; 2026 Wilson Fan &middot; <a href="#" data-email>Email</a></p>
-  </footer>
-
-  <script src="email.js"></script>
-  <script src="theme.js"></script>
-  <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f9013b60e7234ca594ef679765c78de0"}'></script><!-- End Cloudflare Web Analytics -->
-</body>
-</html>
+---
+layout: default
+description: "Wilson Fan. Notes on software, and recipes worth repeating."
+---
+<section class="hero">
+  <h1>I write code and cook<br><em>obsessively</em>.</h1>
+  <div class="hero-art">
+    <picture>
+      <source srcset="wilson_burger.webp" type="image/webp">
+      <img src="wilson_burger.png" alt="Line drawing of Wilson mid-bite into a burger" width="900" height="880">
+    </picture>
+  </div>
+  <p>Technical notes from building software, and recipes that actually get repeated at home.</p>
+</section>

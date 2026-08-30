@@ -1,96 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Notes - Wilson Fan</title>
-  <meta name="description" content="Write-ups on things Wilson built, broke, and eventually understood.">
-  <meta name="color-scheme" content="light dark">
-  <script>
-    (function () {
-      try {
-        var t = localStorage.getItem("theme");
-        if (t) document.documentElement.setAttribute("data-theme", t);
-      } catch (e) {}
-    })();
-  </script>
-  <link rel="icon" href="at-sign.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-  <header class="nav">
-    <a href="index.html" class="wordmark">Wilson Fan</a>
-    <nav>
-      <a href="notes.html" aria-current="page">Notes</a>
-      <a href="recipes.html">Recipes</a>
-      <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode"><svg viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 3A9 9 0 0 1 12 21Z" fill="currentColor"/></svg></button>
-    </nav>
-  </header>
-
-  <main>
-    <section class="stack-section page-section">
-      <h1>Notes</h1>
-      <p class="section-lede">Write-ups on things I built, broke, and eventually understood.</p>
-      <div class="item-list">
-        <a class="item-list-row" href="auditing-unifi-with-ai.html">
-          <div class="item-list-thumb">
-            <picture>
-              <source srcset="auditing-unifi-with-ai.webp" type="image/webp">
-              <img src="auditing-unifi-with-ai.png" alt="" width="1056" height="992">
-            </picture>
-          </div>
-          <div>
-            <h2>Auditing UniFi with AI</h2>
-            <p>A copy-paste prompt for pointing an AI agent at a UniFi controller's API and getting a prioritized network audit back.</p>
-          </div>
-        </a>
-        <a class="item-list-row" href="custom-firmware-snapmaker-u1.html">
-          <div class="item-list-thumb">
-            <picture>
-              <source srcset="custom-firmware-snapmaker-u1.webp" type="image/webp">
-              <img src="custom-firmware-snapmaker-u1.png" alt="" width="1056" height="992">
-            </picture>
-          </div>
-          <div>
-            <h2>Custom Firmware for the Snapmaker U1</h2>
-            <p>Extended Klipper firmware features, plus setting up Bambu RFID filament tag reading.</p>
-          </div>
-        </a>
-        <a class="item-list-row" href="migrating-away-from-authy.html">
-          <div class="item-list-thumb">
-            <picture>
-              <source srcset="migrating-away-from-authy.webp" type="image/webp">
-              <img src="migrating-away-from-authy.png" alt="" width="1056" height="992">
-            </picture>
-          </div>
-          <div>
-            <h2>Migrating Away from Authy</h2>
-            <p>Authy has no export button &mdash; getting your own TOTP secrets out via iOS + mitmproxy, or a rooted Android device.</p>
-          </div>
-        </a>
-        <a class="item-list-row" href="bambu-lab-nfc-cloning.html">
-          <div class="item-list-thumb">
-            <picture>
-              <source srcset="bambu-lab-nfc-cloning.webp" type="image/webp">
-              <img src="bambu-lab-nfc-cloning.png" alt="" width="1056" height="992">
-            </picture>
-          </div>
-          <div>
-            <h2>Bambu Lab NFC Cloning</h2>
-            <p>Writing a spool's RFID data onto a fresh ISO14443A Gen2 tag with a Proxmark3, so a refilled spool reads as genuine.</p>
-          </div>
-        </a>
+---
+layout: default
+title: "Notes"
+description: "Write-ups on things Wilson built, broke, and eventually understood."
+nav: notes
+---
+<section class="stack-section page-section">
+  <h1>Notes</h1>
+  <p class="section-lede">Write-ups on things I built, broke, and eventually understood.</p>
+  <div class="item-list">
+    {% assign items = site.notes | sort: "order" %}
+    {% for item in items %}
+    <a class="item-list-row" href="{{ item.url | relative_url }}">
+      <div class="item-list-thumb">
+        <picture>
+          <source srcset="{{ item.url | remove: '.html' | append: '.webp' | relative_url }}" type="image/webp">
+          <img src="{{ item.url | remove: '.html' | append: '.png' | relative_url }}" alt="" width="1056" height="992">
+        </picture>
       </div>
-    </section>
-  </main>
-
-  <footer class="site-footer">
-    <p>&copy; 2026 Wilson Fan &middot; <a href="#" data-email>Email</a></p>
-  </footer>
-
-  <script src="email.js"></script>
-  <script src="theme.js"></script>
-  <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "f9013b60e7234ca594ef679765c78de0"}'></script><!-- End Cloudflare Web Analytics -->
-</body>
-</html>
+      <div>
+        {% if item.tag %}<span class="card-tag">{{ item.tag }}</span>{% endif %}
+        <h2>{{ item.title }}</h2>
+        <p>{{ item.hub_blurb }}</p>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>

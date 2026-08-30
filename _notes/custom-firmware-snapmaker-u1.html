@@ -1,0 +1,33 @@
+---
+title: "Custom Firmware for the Snapmaker U1"
+description: "Notes on the Snapmaker U1 extended firmware, plus setting up Bambu RFID filament tag reading."
+lede: "A community-built extended firmware for the Snapmaker U1, plus how to wire up RFID filament detection for Bambu-tagged spools."
+updated: 2026-08-30
+order: 2
+thumb_alt: "Line drawing of a desktop 3D printer with a filament spool and an RFID tag chip"
+hub_blurb: "Extended Klipper firmware features, plus setting up Bambu RFID filament tag reading."
+---
+<div class="note-body">
+  <p>The Snapmaker U1 has a <a href="https://snapmakeru1-extended-firmware.pages.dev/" target="_blank" rel="noopener">custom extended firmware</a> built on Klipper, with a much deeper feature set than stock. Builds live on the project's <a href="https://github.com/paxx12/SnapmakerU1/releases" target="_blank" rel="noopener">GitHub releases page</a> along with an installation guide &mdash; flashing it voids the stock warranty, so read the release notes first.</p>
+
+  <h2>What it adds</h2>
+  <ul>
+    <li><strong>Web dashboard:</strong> choice of Fluidd or Mainsail, plus config-file or web-based firmware settings.</li>
+    <li><strong>Camera:</strong> hardware-accelerated WebRTC streaming (internal or USB cameras), remote screen viewing, and timelapse recording with a recovery tool for damaged videos.</li>
+    <li><strong>Klipper/Moonraker:</strong> custom config file inclusion, print-event hooks (<code>PRINT_START</code>/<code>PRINT_END</code>/<code>CANCEL_PRINT</code>), experimental TMC driver tuning, AFC-Lite UI support, BIQU Panda Breath integration, and a faulty-thermistor bypass.</li>
+    <li><strong>Filament management:</strong> RFID tag support (NTAG213/215/216, OpenSpool format), alternative detection for Bambu, Creality, Anycubic and others, and Spoolman sync by ID or RFID.</li>
+    <li><strong>Monitoring:</strong> Prometheus, Home Assistant, and DataDog integration, plus Moonraker Apprise notifications to Discord, Telegram, Slack, and 90+ other services.</li>
+    <li><strong>Remote access:</strong> Tailscale VPN, plus a cloud remote-access service.</li>
+  </ul>
+
+  <h2>Setting up Bambu RFID tag reading</h2>
+  <p>Bambu Lab spools carry an RFID tag encrypted with a per-brand key, so reading them needs that key added to the firmware's config before it'll recognize the tag.</p>
+  <ol>
+    <li>Open <code>/oem/printer_data/config/extended/openrfid_user.cfg</code>.</li>
+    <li>Add the Bambu tag processor section, with the key filled in:</li>
+  </ol>
+  <pre class="prompt-block" tabindex="0"><code>[bambu_lab_tag_processor]
+  # Bambu Lab tagged filament detection key (32 hex characters)
+  key = xxxxxxx</code></pre>
+  <p>The key isn't published by Bambu &mdash; it's been reverse-engineered and shared online, e.g. in <a href="https://gist.github.com/suchmememanyskill/17ef26a255b05e1ec257150ebf36cff4" target="_blank" rel="noopener">this gist</a>.</p>
+</div>
