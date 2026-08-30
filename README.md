@@ -10,6 +10,15 @@ Jekyll site, built by GitHub Pages directly from `master` &mdash; no CI, no Acti
 
 Installs gems on first run (needs Ruby + Bundler), then serves at `http://localhost:4000` with live rebuild on save. Stop with Ctrl-C.
 
+## Accessibility check
+
+```
+npx pa11y --standard WCAG2AA <url>
+npx pa11y --runner axe <url>
+```
+
+Run ad-hoc against pages you've touched (or the live site) when it seems worth checking &mdash; not required after every change. `pa11y` isn't a project dependency; `npx` fetches it on demand and leaves no `package.json`/`node_modules` behind.
+
 ## Adding a recipe
 
 Recipes are documents in the `_recipes` collection, output at `/<filename>.html` (same flat URL scheme as before). Add a new file there and it appears automatically wherever `site.recipes` is looped over.
