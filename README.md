@@ -1,6 +1,6 @@
 # wilson.fan
 
-Jekyll site, built by GitHub Pages directly from `master` &mdash; no CI, no Actions workflow. `styles.css`, `theme.js`, and `email.js` are plain static files at the repo root, unprocessed by Jekyll. Illustrations live under `images/`.
+Jekyll site, built by GitHub Pages directly from `master` &mdash; no CI, no Actions workflow. `css/styles.css`, `js/theme.js`, and `js/email.js` are plain static files, unprocessed by Jekyll. Illustrations live under `images/`.
 
 ## Local preview
 
@@ -96,7 +96,7 @@ Every page follows system `prefers-color-scheme` by default, with a manual overr
 
 1. The anti-flash inline `<script>` right after the `color-scheme` meta tag in `<head>` &mdash; applies a saved theme before first paint.
 2. The icon button as the last item inside `<nav>`.
-3. `<script src="theme.js"></script>` next to the `email.js` tag at the bottom of `<body>`.
+3. `<script src="js/theme.js"></script>` next to the `js/email.js` tag at the bottom of `<body>`.
 
 Anything that needs to invert between themes (line-drawing illustrations so far) should use `filter: invert(var(--invert))` rather than its own `prefers-color-scheme` media query, so it respects the manual override too.
 
@@ -106,4 +106,4 @@ Cloudflare Web Analytics beacon is baked into `_layouts/default.html`, right bef
 
 ## Style tokens
 
-Colors, spacing, and component classes (`.recipe-body`, `.note-body`, `.ref-table`, etc.) all live in `styles.css`. Don't hardcode colors or one-off styles in a page &mdash; add a class to `styles.css` using the existing `--bg` / `--text` / `--text-muted` / `--accent` / `--border` custom properties so light and dark mode both stay correct.
+Colors, spacing, and component classes (`.recipe-body`, `.note-body`, `.ref-table`, etc.) all live in `css/styles.css`. Don't hardcode colors or one-off styles in a page &mdash; add a class to `css/styles.css` using the existing `--bg` / `--text` / `--text-muted` / `--accent` / `--border` custom properties so light and dark mode both stay correct.
