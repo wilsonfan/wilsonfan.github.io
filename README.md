@@ -117,3 +117,7 @@ Cloudflare Web Analytics beacon is baked into `_layouts/default.html`, right bef
 ## Style tokens
 
 Colors, spacing, and component classes (`.recipe-body`, `.note-body`, `.ref-table`, etc.) all live in `css/styles.css`. Don't hardcode colors or one-off styles in a page &mdash; add a class to `css/styles.css` using the existing `--bg` / `--text` / `--text-muted` / `--accent` / `--border` custom properties so light and dark mode both stay correct.
+
+Headlines (`.hero h1`, `.page-section h1`, `.wordmark`) use a self-hosted display serif (`--font-display`, Fraunces) instead of the system font stack &mdash; the two `.woff2` files live in `fonts/`. Body text, nav, and recipe/note content stay on the system stack for load speed; only large headline-scale text gets the display face.
+
+The homepage hero also carries a `.hero-cta` &mdash; a specific "start here" link, not generic nav.
