@@ -3,12 +3,24 @@
 (function () {
   var btn = document.getElementById("theme-toggle");
   if (!btn) return;
+  var root = document.documentElement;
+  var mq = window.matchMedia("(prefers-color-scheme: dark)");
+
+  function current() {
+    return root.getAttribute("data-theme") || (mq.matches ? "dark" : "light");
+  }
+  function sync() {
+    btn.setAttribute("aria-pressed", current() === "dark");
+  }
+  sync();
+  mq.addEventListener("change", sync);
 
   btn.addEventListener("click", function () {
-    var current = document.documentElement.getAttribute("data-theme") ||
-      (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    var next = current === "dark" ? "light" : "dark";
-    document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("theme", next);
+    var next = current() === "dark" ? "light" : "dark";
+    root.classList.add("theme-fade"); // eases the swap; see styles.css
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("theme", next); } catch (e) {}
+    sync();
+    setTimeout(function () { root.classList.remove("theme-fade"); }, 350);
   });
 })();
