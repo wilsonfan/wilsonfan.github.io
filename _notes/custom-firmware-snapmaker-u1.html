@@ -9,6 +9,7 @@ intro: "The Snapmaker U1 has a <a href=\"https://snapmakeru1-extended-firmware.p
 date: 2026-08-30
 last_modified_at: 2026-08-30
 image: /images/social/custom-firmware-snapmaker-u1.jpg
+related: [bambu-lab-nfc-cloning]
 ---
   <h2>What it adds</h2>
   <ul>
@@ -21,7 +22,7 @@ image: /images/social/custom-firmware-snapmaker-u1.jpg
   </ul>
 
   <h2>Setting up Bambu RFID tag reading</h2>
-  <p>Bambu Lab spools carry an RFID tag encrypted with a per-brand key, so reading them needs that key added to the firmware's config before it'll recognize the tag.</p>
+  <p>Bambu Lab spools carry an RFID tag (to clone one onto a blank card, see <a href="{{ '/bambu-lab-nfc-cloning.html' | relative_url }}">Bambu Lab NFC Cloning</a>) encrypted with a per-brand key, so reading them needs that key added to the firmware's config before it'll recognize the tag.</p>
   <ol>
     <li>Open <code>/oem/printer_data/config/extended/openrfid_user.cfg</code>.</li>
     <li>Add the Bambu tag processor section, with the key filled in:</li>

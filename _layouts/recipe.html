@@ -8,5 +8,6 @@ layout: default
   {% if page.lede %}<p class="section-lede">{{ page.lede }}</p>{% endif %}
 
   {{ content }}
+  {% include related.html %}
 </section>
 {% include recipe-jsonld.html %}

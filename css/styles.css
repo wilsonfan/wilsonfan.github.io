@@ -579,6 +579,28 @@ main {
   color: var(--text-muted);
 }
 
+.related {
+  max-width: 760px;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.related h2 {
+  font-size: 1.1rem;
+  margin: 0 0 0.75rem;
+}
+
+.related ul {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.related li {
+  margin-bottom: 0.4rem;
+  color: var(--text-muted);
+}
+
 .ref-section h2 {
   font-size: 1.25rem;
   margin: 2.5rem 0 1rem;

@@ -1,0 +1,15 @@
+{%- comment -%} Links to the pages named in front matter `related:` (slugs, i.e. file names without .html). {%- endcomment -%}
+{%- if page.related -%}
+<aside class="related" aria-labelledby="related-heading">
+  <h2 id="related-heading">Related</h2>
+  <ul>
+  {%- for slug in page.related -%}
+    {%- assign url = "/" | append: slug | append: ".html" -%}
+    {%- assign doc = site.documents | where: "url", url | first -%}
+    {%- if doc %}
+    <li><a href="{{ doc.url | relative_url }}">{{ doc.title }}</a>{% if doc.hub_blurb %} &mdash; {{ doc.hub_blurb }}{% endif %}</li>
+    {%- endif -%}
+  {%- endfor %}
+  </ul>
+</aside>
+{%- endif -%}
