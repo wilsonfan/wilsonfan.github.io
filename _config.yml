@@ -6,7 +6,9 @@ timezone: Pacific/Auckland  # dates are NZ; GitHub builds in UTC and skips futur
 markdown: kramdown
 permalink: /:path.html
 
-author: Wilson Fan
+author:
+  name: Wilson Fan
+  url: https://wilson.fan/
 locale: en_NZ
 
 plugins:
