@@ -22,6 +22,8 @@
   --border: #e7e3df;
   --accent: #a35a0a;
   --code-string: #2f7a32;
+  --code-bg: #f3f0ec;
+  --code-border: #e2ddd7;
   --code-number: #1f5fa8;
   --radius: 12px;
   --invert: 0;
@@ -37,6 +39,8 @@
     --border: #262626;
     --accent: #e0932a;
   --code-string: #9ccc84;
+  --code-bg: #181818;
+  --code-border: #333333;
   --code-number: #7fb4ec;
     --invert: 1;
   }
@@ -51,6 +55,8 @@
   --border: #e7e3df;
   --accent: #a35a0a;
   --code-string: #2f7a32;
+  --code-bg: #f3f0ec;
+  --code-border: #e2ddd7;
   --code-number: #1f5fa8;
   --invert: 0;
   color-scheme: light;
@@ -64,6 +70,8 @@
   --border: #262626;
   --accent: #e0932a;
   --code-string: #9ccc84;
+  --code-bg: #181818;
+  --code-border: #333333;
   --code-number: #7fb4ec;
   --invert: 1;
   color-scheme: dark;
@@ -540,7 +548,8 @@ main {
 .prompt-block {
   margin: 0 0 1.5rem;
   padding: 1.25rem;
-  border: 1px solid var(--border);
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
   border-radius: var(--radius);
   overflow-x: auto;
 }
