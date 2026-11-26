@@ -17,6 +17,85 @@ image: /images/social/syncing-nz-bank-accounts-with-akahu.jpg
     <li>Something to call a REST API: <code>curl</code> to test, then a small script in whatever language you like. The examples here use Python 3 and nothing outside the standard library.</li>
   </ul>
 
+  <h2>Why not just use PocketSmith's built-in bank feed?</h2>
+  <p>PocketSmith can connect to NZ banks itself (its NZ feed is also run through Akahu). I chose not to use it, for these reasons:</p>
+  <ul>
+    <li><strong>Bank login details.</strong> When I tried connecting ASB through PocketSmith's feed, it asked for my full internet banking username and password. Whoever holds those can do anything you can do in internet banking: there is no read-only version of a password, and no control over what it is used for.</li>
+    <li><strong>Your bank's terms.</strong> Most banks' terms tell you never to share your login details with anyone, and you may carry the loss if they are misused. Check your bank's terms and conditions before entering them anywhere but the bank's own sign-in.</li>
+  </ul>
+  <p>The method in this note uses API keys instead, which gives you more control over what is shared:</p>
+  <ul>
+    <li><strong>Read-only access to the bank data.</strong> The script only reads from Akahu (accounts and transactions). It never needs your bank login.</li>
+    <li><strong>You choose what is shared.</strong> Only the accounts you share in the bank consent, allow in the Akahu app, and map in the script are ever sent.</li>
+    <li><strong>PocketSmith never touches your bank.</strong> It only receives the transactions your script sends, through a PocketSmith API key.</li>
+    <li><strong>Easy to revoke.</strong> Regenerate or delete a token and access stops immediately, without changing your bank password.</li>
+  </ul>
+  <p class="recipe-note">Whichever route you take, look at the screen before typing anything: your bank password belongs only on your bank's own sign-in page. If an app asks for your username and password directly, treat that as full access to your account.</p>
+
+  <h2>How the pieces fit together</h2>
+  <p>Every box has to be in place for a sync to work. The arrows are what passes between them, and the last line of each box is what you see when that piece is missing.</p>
+  <ol class="flow">
+    <li>
+      <div class="flow-box">
+        <strong>Your bank</strong>
+        <ul>
+          <li>Online banking login</li>
+          <li>Each account you want shared in the bank's consent step</li>
+        </ul>
+        <p class="flow-fail">Missing: the account never shows up in Akahu.</p>
+      </div>
+      <p class="flow-link">read-only consent</p>
+    </li>
+    <li>
+      <div class="flow-box">
+        <strong>Akahu profile</strong>
+        <ul>
+          <li>Multi-factor authentication turned on</li>
+          <li>The bank connected, and each account allowed in app access</li>
+        </ul>
+        <p class="flow-fail">Missing: the account is absent from <code>GET /accounts</code>.</p>
+      </div>
+      <p class="flow-link">personal app</p>
+    </li>
+    <li>
+      <div class="flow-box">
+        <strong>Akahu personal app</strong>
+        <ul>
+          <li>App ID Token, sent as <code>X-Akahu-Id</code></li>
+          <li>User Access Token, sent as <code>Authorization: Bearer</code></li>
+          <li>Your current IP on the allow list, or no allow list</li>
+        </ul>
+        <p class="flow-fail">Missing: <code>401</code> for a wrong token, <code>403</code> on every call for the IP.</p>
+      </div>
+      <p class="flow-link"><code>GET /transactions</code>, optionally <code>POST /refresh</code> first</p>
+    </li>
+    <li>
+      <div class="flow-box">
+        <strong>Your sync script</strong>
+        <ul>
+          <li>Both Akahu tokens and the PocketSmith key in environment variables</li>
+          <li>An account map: Akahu ID to PocketSmith transaction account ID</li>
+          <li>Dates converted to <code>Pacific/Auckland</code></li>
+          <li>Dry run by default, <code>--send</code> to write</li>
+        </ul>
+        <p class="flow-fail">Missing: unmapped accounts are skipped; dates land a day early.</p>
+      </div>
+      <p class="flow-link">read existing (<code>start_date</code> + <code>end_date</code>), then <code>POST</code> new ones with memo <code>akahu:&lt;_id&gt;</code></p>
+    </li>
+    <li>
+      <div class="flow-box">
+        <strong>PocketSmith</strong>
+        <ul>
+          <li>Developer key, sent as <code>X-Developer-Key</code></li>
+          <li>One transaction account per bank account</li>
+          <li>Category rules, so new transactions arrive categorised</li>
+          <li>Starting balance set after the first sync</li>
+        </ul>
+        <p class="flow-fail">Missing: <code>400</code> without both dates; balances off; everything uncategorised.</p>
+      </div>
+    </li>
+  </ol>
+
   <h2>Create the developer account and generate your keys</h2>
   <ol>
     <li>Go to <a href="https://my.akahu.nz" target="_blank" rel="noopener">my.akahu.nz</a> and create a profile. Akahu asks you to connect your first bank account while you set it up (see the next section).</li>

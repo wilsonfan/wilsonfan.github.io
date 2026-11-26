@@ -115,6 +115,26 @@ intro: "<opening paragraph, shown beside the illustration>"
 - Use placeholders for anything personal in examples: `<your app id token>`, `acc_xxxx...`, `1111111`. Before publishing, grep the note for real account numbers, IDs, keys and names.
 - Test any script you publish (at least `python3 -m py_compile`, ideally an offline run with faked API responses) and say in a `recipe-note` what the published version leaves out compared with the one you actually run.
 
+### Flow charts
+
+For a "how the pieces fit together" diagram, use the HTML flow (see the Akahu note) rather than an image or SVG: real text wraps on phones, follows the theme and is indexable.
+
+```html
+<ol class="flow">
+  <li>
+    <div class="flow-box">
+      <strong>Step name</strong>
+      <ul><li>What must be in place</li></ul>
+      <p class="flow-fail">Missing: what you see when it isn't.</p>
+    </div>
+    <p class="flow-link">what passes to the next step</p>
+  </li>
+  <li><div class="flow-box">...last step, no flow-link...</div></li>
+</ol>
+```
+
+The boxes use `--code-bg` / `--code-border`, the connector arrow is drawn in CSS (`.flow-link::before`/`::after`) in `--accent`.
+
 ### Code blocks and syntax highlighting
 
 ```html

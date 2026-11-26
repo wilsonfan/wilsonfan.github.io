@@ -588,6 +588,62 @@ main {
   color: var(--text-muted);
 }
 
+.flow {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  max-width: 560px;
+}
+
+.note-body .flow > li { margin: 0; }
+
+.flow-box {
+  padding: 1rem 1.25rem;
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: var(--radius);
+}
+
+.flow-box > strong { display: block; margin-bottom: 0.4rem; }
+
+.note-body .flow-box ul { margin: 0 0 0.5rem; }
+
+.note-body .flow-box li { margin-bottom: 0.2rem; }
+
+.note-body .flow-fail {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.flow-link {
+  position: relative;
+  margin: 0;
+  padding: 0.6rem 0 0.6rem 2.75rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* the vertical connector and arrowhead between boxes */
+.flow-link::before {
+  content: "";
+  position: absolute;
+  left: 1.6rem;
+  top: 0;
+  bottom: 0.45rem;
+  border-left: 2px solid var(--accent);
+}
+
+.flow-link::after {
+  content: "";
+  position: absolute;
+  left: calc(1.6rem - 5px);
+  bottom: 0;
+  border: 6px solid transparent;
+  border-top: 7px solid var(--accent);
+  border-bottom: 0;
+}
+
 .related {
   max-width: 760px;
   margin-top: 2.5rem;
