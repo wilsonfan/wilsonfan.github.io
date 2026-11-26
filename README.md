@@ -147,6 +147,7 @@ Anything that needs to invert between themes (line-drawing illustrations so far)
 - `jekyll-sitemap` takes `lastmod` from `last_modified_at`, falling back to `date`. Without either it uses the build time, which changes on every deploy, and Google learns to ignore it. Every collection page needs both.
 - Share images are opaque copies in `images/social/<slug>.jpg`: the transparent PNGs render black-on-black on Facebook, LinkedIn and X. After adding an illustration, make one: composite the PNG on white and save as JPEG quality 85 (Pillow: `Image.new("RGBA", im.size, "white")`, `alpha_composite`, `convert("RGB")`).
 - Hub pages set `permalink: /notes.html` / `/recipes.html` so their canonical and sitemap URLs match the nav links; without it Jekyll gives them `/notes`. Any new top-level page needs the same.
+- `timezone: Pacific/Auckland` in `_config.yml` matters: GitHub Pages builds in UTC and silently skips pages whose `date` is in the future, so without it a note dated today (NZ) 404s until UTC catches up. Test with `TZ=UTC bundle exec jekyll build`.
 - Keep descriptions under about 155 characters; Google truncates longer ones.
 - Anything in the repo root that isn't site content goes in `exclude:` in `_config.yml` (currently `serve.sh` and the local Gemini key file), or Jekyll publishes it. A running `jekyll serve` doesn't reload `_config.yml`; restart it after config changes.
 - Check after a change: `grep -o 'rel="canonical"[^>]*' _site/<page>.html` and `grep -A1 '<loc>' _site/sitemap.xml`.

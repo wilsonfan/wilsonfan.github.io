@@ -1,6 +1,7 @@
 title: Wilson Fan
 description: "Wilson Fan. Notes on software, and recipes worth repeating."
 url: "https://wilson.fan"
+timezone: Pacific/Auckland  # dates are NZ; GitHub builds in UTC and skips future-dated pages
 
 markdown: kramdown
 permalink: /:path.html
