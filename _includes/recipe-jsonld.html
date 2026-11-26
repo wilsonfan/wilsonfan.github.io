@@ -1,0 +1,63 @@
+{%- comment -%}
+Recipe JSON-LD built from the recipe HTML itself, so there is one source of truth.
+Expects the README recipe structure: <h2>Ingredients</h2> + <ul><li>s, then one or
+more <h2> sections with <ol><li> steps (or a single <p>). Pages without an
+Ingredients heading (the sous vide reference) get none.
+Entities are decoded by hand because Liquid has no HTML-decode filter; add any new
+entity a recipe starts using to the replace chain below.
+{%- endcomment -%}
+{%- if content contains "<h2>Ingredients</h2>" -%}
+{%- assign c = content | replace: "&deg;", "°" | replace: "&mdash;", "—" | replace: "&ndash;", "–" | replace: "&frac12;", "½" | replace: "&frac14;", "¼" | replace: "&middot;", "·" | replace: "&nbsp;", " " | replace: "&amp;", "&" -%}
+{%- assign after = c | split: "<h2>Ingredients</h2>" | last -%}
+{%- assign sections = after | split: "<h2>" -%}
+{%- assign ingredients = "" | split: "" -%}
+{%- assign lis = sections[0] | split: "<li>" -%}
+{%- for li in lis offset: 1 -%}
+  {%- assign item = li | split: "</li>" | first | strip_html | strip | normalize_whitespace -%}
+  {%- assign ingredients = ingredients | push: item -%}
+{%- endfor -%}
+{%- assign image = page.image | default: site.image | absolute_url -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Recipe",
+  "name": {{ page.title | replace: "&mdash;", "—" | replace: "&amp;", "&" | jsonify }},
+  "description": {{ page.description | jsonify }},
+  "image": [{{ image | jsonify }}],
+  "author": {"@type": "Person", "name": {{ site.author.name | jsonify }}, "url": {{ site.author.url | jsonify }}},
+  "datePublished": {{ page.date | date: "%Y-%m-%d" | jsonify }},
+  "dateModified": {{ page.last_modified_at | date: "%Y-%m-%d" | jsonify }},
+  {%- if page.prep_time %}"prepTime": {{ page.prep_time | jsonify }},{% endif %}
+  {%- if page.cook_time %}"cookTime": {{ page.cook_time | jsonify }},{% endif %}
+  {%- if page.total_time %}"totalTime": {{ page.total_time | jsonify }},{% endif %}
+  {%- if page.recipe_yield %}"recipeYield": {{ page.recipe_yield | jsonify }},{% endif %}
+  {%- if page.recipe_category %}"recipeCategory": {{ page.recipe_category | jsonify }},{% endif %}
+  {%- if page.recipe_cuisine %}"recipeCuisine": {{ page.recipe_cuisine | jsonify }},{% endif %}
+  "recipeIngredient": {{ ingredients | jsonify }},
+  "recipeInstructions": [
+  {%- for s in sections offset: 1 -%}
+    {%- assign name = s | split: "</h2>" | first | strip_html | strip -%}
+    {%- assign body = s | split: "</h2>" | last | split: "<p class=\"recipe-note\"" | first | split: "</div>" | first -%}
+    {%- assign steps = "" | split: "" -%}
+    {%- if body contains "<li>" -%}
+      {%- assign parts = body | split: "<li>" -%}
+      {%- for p in parts offset: 1 -%}
+        {%- assign t = p | split: "</li>" | first | strip_html | strip | normalize_whitespace -%}
+        {%- assign steps = steps | push: t -%}
+      {%- endfor -%}
+    {%- else -%}
+      {%- assign t = body | strip_html | strip | normalize_whitespace -%}
+      {%- if t != "" -%}{%- assign steps = steps | push: t -%}{%- endif -%}
+    {%- endif -%}
+    {%- if sections.size == 2 -%}
+      {%- for t in steps -%}{"@type": "HowToStep", "text": {{ t | jsonify }}}{% unless forloop.last %},{% endunless %}{%- endfor -%}
+    {%- else -%}
+      {"@type": "HowToSection", "name": {{ name | jsonify }}, "itemListElement": [
+        {%- for t in steps -%}{"@type": "HowToStep", "text": {{ t | jsonify }}}{% unless forloop.last %},{% endunless %}{%- endfor -%}
+      ]}{% unless forloop.last %},{% endunless %}
+    {%- endif -%}
+  {%- endfor -%}
+  ]
+}
+</script>
+{%- endif -%}

@@ -44,6 +44,7 @@ image: /images/social/<dish-name>.jpg
 
 - `date` is when the page was first published, `last_modified_at` the last substantive edit (both `YYYY-MM-DD`). They feed the sitemap `lastmod` and the structured data (see SEO below); bump `last_modified_at` on real content changes, not on markup tweaks.
 - `image` is the share preview (see SEO below).
+- Optional, for Google's recipe rich results: `recipe_yield` (`"4 servings"`), `prep_time` / `cook_time` / `total_time` (ISO 8601 durations: `PT15M`, `PT1H`, `PT16H40M`), `recipe_category` (`Main course`, `Sauce`, `Dessert`), `recipe_cuisine`. Only fill in what the recipe actually states; leave a field out rather than guess.
 
 - `order` controls position in the `recipes.html` list &mdash; give it the next integer.
 - `layout: recipe` and `nav: recipes` are set automatically via `_config.yml` collection defaults; don't repeat them.
@@ -150,6 +151,7 @@ Anything that needs to invert between themes (line-drawing illustrations so far)
 - `timezone: Pacific/Auckland` in `_config.yml` matters: GitHub Pages builds in UTC and silently skips pages whose `date` is in the future, so without it a note dated today (NZ) 404s until UTC catches up. Test with `TZ=UTC bundle exec jekyll build`.
 - Keep descriptions under about 155 characters; Google truncates longer ones.
 - Anything in the repo root that isn't site content goes in `exclude:` in `_config.yml` (currently `serve.sh` and the local Gemini key file), or Jekyll publishes it. A running `jekyll serve` doesn't reload `_config.yml`; restart it after config changes.
+- Recipes also get schema.org `Recipe` JSON-LD from `_includes/recipe-jsonld.html` (included by `_layouts/recipe.html`). It parses the page's own HTML, so the body structure above is load-bearing: ingredients are the `<li>`s between `<h2>Ingredients</h2>` and the next `<h2>`; each later `<h2>` is a step section (its `<ol><li>`s, or its `<p>` if it has no list; `recipe-note`s are skipped). One section gives plain `HowToStep`s, several give `HowToSection`s. Pages without an Ingredients heading (the reference page) get none. Liquid can't decode HTML entities, so the include replaces the ones in use (`&deg;` `&mdash;` `&ndash;` `&frac12;` `&frac14;` `&middot;` `&nbsp;` `&amp;`) by hand: add any new entity there, or type the character directly. Verify with Google's Rich Results Test after deploying.
 - Check after a change: `grep -o 'rel="canonical"[^>]*' _site/<page>.html` and `grep -A1 '<loc>' _site/sitemap.xml`.
 
 ## Analytics
