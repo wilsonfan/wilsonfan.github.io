@@ -1,0 +1,268 @@
+---
+title: "Syncing an NZ Bank Account with Akahu"
+description: "Set up a free Akahu developer account and API keys, connect an NZ bank like ASB, and sync transactions into PocketSmith without duplicates."
+lede: "A free Akahu personal app gives you API access to your own NZ bank accounts. Here is the setup, the gotchas, and a safe pattern for syncing into a budgeting tool."
+order: 5
+thumb_alt: "Line drawing of a bank building with arrows syncing to a laptop showing a list"
+hub_blurb: "Create an Akahu developer account, generate keys, connect ASB (or another NZ bank), and sync transactions without duplicates."
+intro: "NZ banks don't give you a simple personal API. Akahu does the bank connection for you and exposes one consistent REST API across accounts. I used it to feed ASB transactions into a budgeting app, and this is the setup plus the parts that tripped me up. Everything below is a placeholder: never paste real keys, account numbers or balances into a script, a repo or a chat."
+date: 2026-11-27
+last_modified_at: 2026-11-27
+image: /images/social/syncing-nz-bank-accounts-with-akahu.jpg
+---
+  <h2>What you need</h2>
+  <ul>
+    <li>An Akahu profile (free) and a bank login for the accounts you want to read.</li>
+    <li>An Akahu <strong>personal app</strong>. Akahu's docs list personal apps as free, limited to your own Akahu account, so they are meant for exactly this kind of home project.</li>
+    <li>Something to call a REST API: <code>curl</code> to test, then a small script in whatever language you like. The examples here use Python 3 and nothing outside the standard library.</li>
+  </ul>
+
+  <h2>Create the developer account and generate your keys</h2>
+  <ol>
+    <li>Go to <a href="https://my.akahu.nz" target="_blank" rel="noopener">my.akahu.nz</a> and create a profile. Akahu asks you to connect your first bank account while you set it up (see the next section).</li>
+    <li>Turn on multi-factor authentication for the profile. Akahu requires it before you can create an app.</li>
+    <li>Open the <strong>Developers</strong> page in your Akahu profile and accept the Developer Terms.</li>
+    <li>Create a <strong>personal app</strong>. Akahu then shows you two credentials:
+      <ul>
+        <li>an <strong>App ID Token</strong>, sent as the <code>X-Akahu-Id</code> header, and</li>
+        <li>a <strong>User Access Token</strong>, sent as <code>Authorization: Bearer &lt;token&gt;</code>.</li>
+      </ul>
+    </li>
+    <li>Copy both somewhere private straight away, such as a password manager. If you regenerate a token the old one stops working and calls with it return <code>401 Unauthorized</code>.</li>
+  </ol>
+  <p class="recipe-note">I wrote the steps above from Akahu's personal-apps documentation and my own setup. The exact button labels on the Developers page may differ, so follow what the page shows. Personal apps cannot use Akahu's OAuth flow; the two tokens are all you get.</p>
+
+  <h3>Keep the tokens out of everything</h3>
+  <ul>
+    <li>Read them from environment variables (<code>AKAHU_APP_TOKEN</code>, <code>AKAHU_USER_TOKEN</code>) or from a file outside any git repo with <code>chmod 600</code>.</li>
+    <li>Never commit them, paste them into a chat with an AI assistant, or put them in a script's source.</li>
+    <li>If one leaks, regenerate it on the Developers page. The old one is invalidated immediately.</li>
+  </ul>
+
+  <h2>Connect your bank and choose the accounts</h2>
+  <p>Akahu connects to your bank for you, so you sign in to the bank through Akahu and agree to share specific accounts. I connected ASB. The API is the same for any bank Akahu supports, so another NZ bank works the same way; check Akahu's current list of supported banks, as I have not verified which ones are available.</p>
+  <ul>
+    <li>Share only the accounts you want in the bank consent step.</li>
+    <li>In my case a newly shared account also had to be allowed for the app in the Akahu app access settings before it appeared in the API. If an account you just shared is missing from <code>GET /accounts</code>, check both places.</li>
+    <li>Existing account IDs did not change when I added more accounts later.</li>
+  </ul>
+
+  <h2>Test it with curl</h2>
+  <p>Every request goes to <code>https://api.akahu.io/v1</code> with the two headers:</p>
+  <pre class="prompt-block" tabindex="0" data-lang="Bash"><code class="language-bash">export AKAHU_APP_TOKEN='&lt;your app id token&gt;'
+export AKAHU_USER_TOKEN='&lt;your user access token&gt;'
+
+curl -s https://api.akahu.io/v1/me \
+  -H "Authorization: Bearer $AKAHU_USER_TOKEN" \
+  -H "X-Akahu-Id: $AKAHU_APP_TOKEN"
+
+curl -s https://api.akahu.io/v1/accounts \
+  -H "Authorization: Bearer $AKAHU_USER_TOKEN" \
+  -H "X-Akahu-Id: $AKAHU_APP_TOKEN"</code></pre>
+  <p><code>/accounts</code> returns each account with an Akahu ID (<code>acc_...</code>), name, type, balance and a <code>refreshed</code> block with timestamps for balance and transactions. Note the IDs: you will map them to your destination accounts. Then try <code>GET /transactions</code>.</p>
+
+  <h2>Gotchas I hit</h2>
+  <ul>
+    <li><strong>403 Forbidden on every call.</strong> Akahu lets you restrict the app to IPv4 ranges on the Developers page (by default any IP is allowed). I had set an allow list and then ran the script from a different network, so every endpoint returned 403. Find your current address with <code>curl -4 https://api.ipify.org</code> and add it as <code>&lt;ip&gt;/32</code>. The docs don't tie 403 to the allow list, so this is what I observed, not something I can quote.</li>
+    <li><strong>Dates are a day early.</strong> Akahu stores a transaction's date as the UTC timestamp of NZ midnight, so the first 10 characters of the string are the previous day. Convert to <code>Pacific/Auckland</code> before taking the date.</li>
+    <li><strong>No time of day.</strong> Every transaction lands at NZ midnight, so you cannot tell lunch from dinner. The raw data does carry a merchant name and a category you can use instead.</li>
+    <li><strong>Settled transactions only.</strong> <code>GET /transactions</code> returns settled items. Pending ones are on a separate <code>/transactions/pending</code> endpoint.</li>
+    <li><strong>Data is not instant.</strong> Akahu refreshes from the bank on its own schedule (about daily for me). <code>POST /refresh</code> asks for an immediate refresh, but personal apps are rate limited (Akahu documents an hour's rest between manual refreshes, and a 429 if you retry too soon). Wait until <code>refreshed.transactions</code> on <code>/accounts</code> changes before you read.</li>
+    <li><strong>History is limited.</strong> Akahu returned about two years of history for me, counting back from the day I granted access. Anything older needs a bank export from your bank.</li>
+    <li><strong>Sign convention.</strong> Amounts are signed: negative is money out. That matched what my destination expected, but check yours.</li>
+  </ul>
+
+  <h2>Reading transactions with pagination</h2>
+  <p><code>GET /transactions</code> takes <code>start</code> (exclusive), <code>end</code> (inclusive) and <code>cursor</code>. Each response has <code>items</code> and <code>cursor.next</code>; keep requesting until <code>next</code> is empty or you only get the first page.</p>
+  <pre class="prompt-block" tabindex="0" data-lang="Python"><code class="language-python">import json, os, urllib.parse, urllib.request
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+NZ = ZoneInfo("Pacific/Auckland")
+HEADERS = {
+    "Authorization": "Bearer " + os.environ["AKAHU_USER_TOKEN"],
+    "X-Akahu-Id": os.environ["AKAHU_APP_TOKEN"],
+}
+
+def get(url):
+    req = urllib.request.Request(url, headers=HEADERS)
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return json.load(r)
+
+def fetch_transactions(start, end=None):
+    params = {"start": start}
+    if end:
+        params["end"] = end
+    items, cursor = [], None
+    while True:
+        q = dict(params, **({"cursor": cursor} if cursor else {}))
+        page = get("https://api.akahu.io/v1/transactions?" + urllib.parse.urlencode(q))
+        items += page["items"]
+        cursor = (page.get("cursor") or {}).get("next")
+        if not cursor:
+            return items
+
+def nz_date(iso):
+    # Akahu dates are UTC timestamps of NZ midnight; the first 10 chars are a day early.
+    return datetime.fromisoformat(iso.replace("Z", "+00:00")).astimezone(NZ).date().isoformat()
+
+assert nz_date("2024-11-19T11:00:00.000Z") == "2024-11-20"  # NZDT
+assert nz_date("2026-06-30T12:00:00.000Z") == "2026-07-01"  # NZST</code></pre>
+  <p>Each item has <code>_id</code>, <code>_account</code>, <code>date</code>, <code>amount</code>, <code>description</code> and usually a running <code>balance</code>. Start with <code>start=2000-01-01T00:00:00Z</code> to get everything Akahu has.</p>
+
+  <h2>Syncing into another tool without duplicates</h2>
+  <p>I synced into PocketSmith through its REST API, but the same pattern works for a spreadsheet, a database or any other target. The goal is a script you can re-run at any time without worrying.</p>
+  <ol>
+    <li><strong>Map accounts once.</strong> Keep a small table from each Akahu account ID to the destination account ID. Only mapped accounts are synced, so a new account does nothing until you add it.</li>
+    <li><strong>Stamp every record with its Akahu ID.</strong> I put <code>akahu:&lt;_id&gt;</code> in the memo field of each transaction I create.</li>
+    <li><strong>Read what already exists before writing.</strong> For each account, list the destination records for the date range (plus a week either side in case a date was edited) and skip any <code>_id</code> already stamped. The destination is the record of what was sent, so a lost local file or a crash halfway cannot cause duplicates.</li>
+    <li><strong>Dry run by default.</strong> Print what would be sent and require a <code>--send</code> flag to write anything. Try one account and a short date range first.</li>
+    <li><strong>Be careful retrying writes.</strong> Retry reads on 429 or 5xx. Retry a write only on 429, which means it was not processed. On a timeout or a 5xx after sending, stop: the record may exist. Re-running skips it if it did.</li>
+    <li><strong>Throttle.</strong> A short sleep between writes keeps you under the destination's rate limits.</li>
+  </ol>
+  <p>Deleting the stamp from a record in the destination makes the next sync send it again, so leave it alone.</p>
+
+  <h2>Example: syncing into PocketSmith</h2>
+  <p>This is a trimmed-down version of the script I use. Everything personal is a placeholder: the account IDs, the keys and the user ID.</p>
+
+  <h3>Get a PocketSmith developer key</h3>
+  <ul>
+    <li>Create a developer key in PocketSmith's security settings. It is sent as the <code>X-Developer-Key</code> header.</li>
+    <li>The key has full access to your PocketSmith account, so treat it like the Akahu tokens: environment variable only, never in a file you commit or a chat.</li>
+  </ul>
+
+  <h3>Find the account IDs</h3>
+  <p>Transactions belong to a PocketSmith <strong>transaction account</strong>, which is not the same ID as the account shown in the web app's URL. List them and match each one to an Akahu account by name or number:</p>
+  <pre class="prompt-block" tabindex="0" data-lang="Bash"><code class="language-bash">export POCKETSMITH_KEY='&lt;your developer key&gt;'
+
+# your user ID
+curl -s https://api.pocketsmith.com/v2/me -H "X-Developer-Key: $POCKETSMITH_KEY"
+
+# transaction accounts: note each id, name and number
+curl -s https://api.pocketsmith.com/v2/users/&lt;user id&gt;/transaction_accounts \
+  -H "X-Developer-Key: $POCKETSMITH_KEY"</code></pre>
+  <p>If an account is missing, create it with <code>POST /users/&lt;user id&gt;/accounts</code> (<code>institution_id</code>, <code>title</code>, <code>currency_code</code>, <code>type</code>). The response's <code>primary_transaction_account.id</code> is the ID to sync into.</p>
+
+  <h3>The script</h3>
+  <p>Python 3.9 or later, standard library only. Fill in <code>ACCOUNTS</code> with your own IDs.</p>
+  <pre class="prompt-block" tabindex="0" data-lang="Python"><code class="language-python">#!/usr/bin/env python3
+"""Akahu -&gt; PocketSmith sync. Dry run by default; --send to write.
+Needs AKAHU_APP_TOKEN, AKAHU_USER_TOKEN and POCKETSMITH_KEY in the environment."""
+import argparse, json, os, re, sys, time, urllib.parse, urllib.request
+from datetime import date, datetime, timedelta
+from zoneinfo import ZoneInfo
+
+NZ = ZoneInfo("Pacific/Auckland")
+PS = "https://api.pocketsmith.com/v2"
+MARKER = re.compile(r"akahu:(\S+)")
+PAD = timedelta(days=7)
+
+# Akahu account ID -&gt; PocketSmith transaction account ID (placeholders)
+ACCOUNTS = {
+    "acc_xxxxxxxxxxxxxxxxxxxxxxxxx": 1111111,  # everyday account
+    "acc_yyyyyyyyyyyyyyyyyyyyyyyyy": 2222222,  # credit card
+}
+
+AKAHU = {"Authorization": "Bearer " + os.environ.get("AKAHU_USER_TOKEN", ""),
+         "X-Akahu-Id": os.environ.get("AKAHU_APP_TOKEN", "")}
+POCKET = {"X-Developer-Key": os.environ.get("POCKETSMITH_KEY", ""),
+          "Content-Type": "application/json", "Accept": "application/json"}
+
+
+def call(url, headers, body=None):
+    data = json.dumps(body).encode() if body is not None else None
+    req = urllib.request.Request(url, data=data, headers=headers)
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return r.status, json.loads(r.read() or b"null"), r.headers
+
+
+def fetch_transactions(start):
+    items, cursor = [], None
+    while True:
+        q = {"start": start, **({"cursor": cursor} if cursor else {})}
+        _, page, _ = call("https://api.akahu.io/v1/transactions?" + urllib.parse.urlencode(q), AKAHU)
+        items += page["items"]
+        cursor = (page.get("cursor") or {}).get("next")
+        if not cursor:
+            return items
+
+
+def nz_date(iso):
+    return datetime.fromisoformat(iso.replace("Z", "+00:00")).astimezone(NZ).date()
+
+
+def existing_ids(account, start, end):
+    """Akahu IDs already stamped on PocketSmith transactions in this account."""
+    # PocketSmith returns 400 unless both start_date and end_date are given.
+    url = f"{PS}/transaction_accounts/{account}/transactions?" + urllib.parse.urlencode(
+        {"start_date": start.isoformat(), "end_date": end.isoformat(), "per_page": 1000})
+    found = set()
+    while url:
+        _, page, headers = call(url, POCKET)
+        found |= {m.group(1) for t in page if (m := MARKER.search(t.get("memo") or ""))}
+        nxt = re.search(r'&lt;([^&gt;]+)&gt;;\s*rel="next"', headers.get("Link") or "")
+        url = nxt.group(1) if nxt else None
+    return found
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--start", default="2000-01-01T00:00:00Z")
+    ap.add_argument("--send", action="store_true")
+    args = ap.parse_args()
+
+    by_account = {}
+    for t in fetch_transactions(args.start):
+        if t["_account"] in ACCOUNTS:
+            by_account.setdefault(ACCOUNTS[t["_account"]], {})[t["_id"]] = t
+
+    for account, txns in by_account.items():
+        dates = [nz_date(t["date"]) for t in txns.values()]
+        have = existing_ids(account, min(dates) - PAD, max(dates) + PAD)
+        for t in sorted((t for i, t in txns.items() if i not in have), key=lambda t: t["date"]):
+            body = {"date": nz_date(t["date"]).isoformat(), "amount": t["amount"],
+                    "payee": t["description"], "memo": f"akahu:{t['_id']}"}
+            print(("SEND" if args.send else "DRY "), account, body["date"], body["amount"], body["payee"])
+            if args.send:
+                # No automatic retry: a failed POST may still have landed. Re-run instead.
+                status, _, _ = call(f"{PS}/transaction_accounts/{account}/transactions", POCKET, body)
+                if status != 201:
+                    sys.exit(f"unexpected {status} for {t['_id']}")
+                time.sleep(0.2)
+
+
+if __name__ == "__main__":
+    assert nz_date("2024-11-19T11:00:00.000Z") == date(2024, 11, 20)
+    main()</code></pre>
+  <p>Run it as a dry run first, check the list, then send:</p>
+  <pre class="prompt-block" tabindex="0" data-lang="Bash"><code class="language-bash">python3 sync.py                                  # dry run: lists what would be sent
+python3 sync.py --start 2026-11-01T00:00:00Z     # only recent transactions
+python3 sync.py --send                           # write them</code></pre>
+  <p class="recipe-note">I've kept this version short. My own script also retries reads on 429 and 5xx errors and has offline tests for the duplicate check; add both before you rely on it.</p>
+
+  <h3>PocketSmith gotchas</h3>
+  <ul>
+    <li><strong>400 "Invalid start and end dates".</strong> Listing an account's transactions needs both <code>start_date</code> and <code>end_date</code>; <code>start_date</code> alone fails.</li>
+    <li><strong>Paging is in the <code>Link</code> header,</strong> not the response body. Follow <code>rel="next"</code> until it disappears.</li>
+    <li><strong>Category rules apply on creation.</strong> PocketSmith's own rules categorised most transactions as the script created them. A rule added later only catches new transactions; fix older ones with <code>PUT /transactions/&lt;id&gt;</code> and a <code>category_id</code>.</li>
+    <li><strong>Rules can be created through the API but not edited or deleted.</strong> Use the web app for that.</li>
+    <li><strong>Balances lag.</strong> After you change a starting balance, <code>current_balance</code> recalculates a few seconds later, so wait before comparing it with the bank.</li>
+    <li><strong>A starting balance includes its own day.</strong> Date it the day before the first synced transaction. For a loan, a starting balance of 0 the day before the advance worked for me.</li>
+    <li><strong>Loans show principal only.</strong> Akahu gives the advance and the principal part of each repayment; the interest is inside the repayment from your everyday account. Categorise principal and advances as transfers.</li>
+  </ul>
+
+  <h2>Check the result</h2>
+  <ul>
+    <li>Compare each account's balance and transaction count with Akahu for the same date range.</li>
+    <li>If the destination started with an opening balance, set it after the first sync so the current balance matches the bank. Recalculation can take a few seconds. If part of the history is missing, balances before that gap will be offset.</li>
+    <li>Transfers between your own accounts arrive as a debit in one and a credit in the other. Decide how your destination should pair or categorise them.</li>
+  </ul>
+
+  <h2>Adding another account later</h2>
+  <ol>
+    <li>Share the account in the bank consent and allow it in the Akahu app access settings.</li>
+    <li>Create the matching account in your destination.</li>
+    <li>Add its Akahu ID and the destination ID to your mapping.</li>
+    <li>Run a dry run, then <code>--send</code>, then fix the opening balance.</li>
+  </ol>
+  <p>Credit cards, loans and savings accounts work the same way, but liabilities show negative balances, so check how your destination represents them.</p>

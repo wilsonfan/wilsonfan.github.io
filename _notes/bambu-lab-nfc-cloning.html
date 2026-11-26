@@ -2,11 +2,13 @@
 title: "Bambu Lab NFC Cloning"
 description: "Cloning Bambu Lab filament spool RFID tags onto ISO14443A Gen2 magic cards with a Proxmark3."
 lede: "Writing a Bambu Lab filament spool's RFID data onto a fresh ISO14443A Gen2 tag with a Proxmark3, so a refilled or third-party spool reads as the real thing in the AMS."
-updated: 2026-08-30
 order: 4
 thumb_alt: "Line drawing of a handheld RFID reader scanning a coin-shaped tag"
 hub_blurb: "Writing a spool's RFID data onto a fresh ISO14443A Gen2 tag with a Proxmark3, so a refilled spool reads as genuine."
 intro: "Every Bambu Lab spool has a Mifare 13.56 MHz tag glued to it, and the AMS reads it to identify material, color, and remaining length. Clone that tag onto a new card and glue it to a refilled spool (or a compatible third-party one) and the AMS treats it exactly like genuine Bambu filament."
+date: 2026-08-30
+last_modified_at: 2026-08-30
+image: /images/social/bambu-lab-nfc-cloning.jpg
 ---
   <h2>Background</h2>
   <p>Two community projects do the heavy lifting here:</p>
@@ -28,7 +30,7 @@ intro: "Every Bambu Lab spool has a Mifare 13.56 MHz tag glued to it, and the AM
     <li>Copy both files somewhere convenient, e.g. <code>/tmp/bambu/0308501C/</code>.</li>
     <li>In the Proxmark3 client, write the dump onto a Gen2 tag:</li>
   </ol>
-  <pre class="prompt-block" tabindex="0"><code>hf mf restore --force -f "/tmp/bambu/0308501C/hf-mf-0308501C-dump.bin" -k "/tmp/bambu/0308501C/hf-mf-0308501C-key.bin"</code></pre>
+  <pre class="prompt-block" tabindex="0" data-lang="Proxmark3"><code>hf mf restore --force -f "/tmp/bambu/0308501C/hf-mf-0308501C-dump.bin" -k "/tmp/bambu/0308501C/hf-mf-0308501C-key.bin"</code></pre>
   <p class="recipe-note">The <code>--force</code> flag is what lets the Proxmark3 overwrite block 0 (the UID) on a Gen2 tag &mdash; without it, the write only touches the data blocks and the UID stays mismatched, which fails the signature check.</p>
 
   <p>Once it's written, tap the tag against the Proxmark3 and run <code>hf mf info</code> to confirm the UID and data match the original dump before gluing it to a spool.</p>

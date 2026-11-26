@@ -36,8 +36,14 @@ description: "<one-sentence meta description>"
 meta: "<one-line summary shown under the h1: temp/time, or prep/cook/serves>"
 order: 7
 hub_blurb: "<one-sentence hook shown on the recipes.html row>"
+date: 2026-08-30
+last_modified_at: 2026-08-30
+image: /images/social/<dish-name>.jpg
 ---
 ```
+
+- `date` is when the page was first published, `last_modified_at` the last substantive edit (both `YYYY-MM-DD`). They feed the sitemap `lastmod` and the structured data (see SEO below); bump `last_modified_at` on real content changes, not on markup tweaks.
+- `image` is the share preview (see SEO below).
 
 - `order` controls position in the `recipes.html` list &mdash; give it the next integer.
 - `layout: recipe` and `nav: recipes` are set automatically via `_config.yml` collection defaults; don't repeat them.
@@ -56,8 +62,12 @@ Everything after the front matter is raw HTML (no Markdown conversion happens on
 
 Recipe pages can carry a `.recipe-art` illustration inside `.recipe-intro`, matching `images/wilson_burger.png`'s black ink line-drawing style (no color, no shading, no fill).
 
-- Generate with a `gemini-2.5-flash-image` (Nano Banana) call, passing `images/wilson_burger.png` as the style-reference image alongside a prompt describing the dish. See git history for the exact prompt template used.
-- Save as `images/<dish-name>.png` (same basename as the collection file) with a transparent background &mdash; flood the near-white pixels to alpha 0 so dark mode can invert it cleanly (white lines on the dark page background instead of a visible white box).
+- Generate with a `gemini-2.5-flash-image` (Nano Banana) call to `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent` (key in the `x-goog-api-key` header, from `GEMINI_API_KEY`; `generationConfig.responseModalities: ["IMAGE"]`), passing a style-reference image as `inline_data` alongside the prompt. Use `images/wilson_burger.png` for recipes; for notes, an existing note image (e.g. `images/bambu-lab-nfc-cloning.png`) gives the simpler, smaller-subject look the notes share. Prompt used for the Akahu note (swap the subject):
+
+  > Using the attached image as the exact style reference, draw a new illustration in the same style: minimal black ink line drawing, uniform thin outline strokes, no color, no shading, no fill, no text, white background, plenty of empty space around a small centered subject. Subject: &lt;what to draw&gt;.
+
+  The earlier prompts weren't kept, so save new ones here. `400 API_KEY_INVALID` means the key is expired or revoked; make a new one in Google AI Studio.
+- Save as `images/<dish-name>.png` (same basename as the collection file), 1056&times;992, with a transparent background &mdash; flood the near-white pixels to alpha 0 so dark mode can invert it cleanly (white lines on the dark page background instead of a visible white box). Gemini leaves a faint grey haze around the drawing, so threshold rather than only removing pure white: with Pillow, convert to greyscale, set alpha 0 where the value is over ~235 and scale alpha by darkness below that, colour black. Check the result composited on white before committing.
 - Generate a lossless `.webp` alongside it (`cwebp -lossless -z 9 -q 80`) and serve both via `<picture>`, same pattern as the homepage hero:
 
 ```html
@@ -69,7 +79,7 @@ Recipe pages can carry a `.recipe-art` illustration inside `.recipe-intro`, matc
 </div>
 ```
 
-Every recipe currently has one, and the `recipes.html`/`notes.html` hub loops assume `images/<slug>.png`/`.webp` exist. If a future recipe skips the illustration, add an `{% if %}` around the hub-row `<picture>` (falling back to an empty `<div class="item-list-thumb"></div>`) rather than forcing a mediocre image.
+Every recipe currently has one, and the `recipes.html`/`notes.html` hub loops assume `images/<slug>.png`/`.webp` exist. If a future recipe skips the illustration, add an `{% if %}` around the hub-row `<picture>` (falling back to an empty `<div class="item-list-thumb"></div>`) rather than forcing a mediocre image. Notes already do this: leave out `thumb_alt` and both `notes.html` and the `note` layout skip the image (the intro then renders as a plain paragraph).
 
 ### 5. Reference / working-notes pages
 
@@ -84,9 +94,11 @@ Notes are documents in the `_notes` collection, following the same idea as recip
 title: "<Note Title>"
 description: "<one-sentence meta description>"
 lede: "<one or two sentence summary, shown as the section lede>"
-updated: 2026-08-30
+date: 2026-08-30
+last_modified_at: 2026-08-30
 order: 5
 thumb_alt: "<alt text for the illustration>"
+image: /images/social/<slug>.jpg
 hub_blurb: "<one-sentence hook shown on the notes.html row>"
 intro: "<opening paragraph, shown beside the illustration>"
 ---
@@ -95,10 +107,28 @@ intro: "<opening paragraph, shown beside the illustration>"
 ```
 
 - `layout: note` and `nav: notes` come from `_config.yml` collection defaults.
-- The `note` layout renders the illustration beside the `intro` paragraph (same `.recipe-intro` pairing recipes use) and the "Last updated" line automatically from `thumb_alt`/`updated`/`intro` &mdash; don't repeat any of them in the body, and don't add your own `.note-body` wrapper, the layout provides it.
+- The `note` layout renders the illustration beside the `intro` paragraph (same `.recipe-intro` pairing recipes use) and the "Last updated" line automatically from `thumb_alt`/`last_modified_at`/`intro` &mdash; don't repeat any of them in the body, and don't add your own `.note-body` wrapper, the layout provides it.
 - Body content starts at the first `<h2>` &mdash; the opening paragraph lives in `intro` instead.
-- Bump `updated` (and keep it an actual `YYYY-MM-DD` value, quotes optional) whenever a note gets a substantive edit.
-- A copy-paste command, config snippet, or prompt goes in `<pre class="prompt-block" tabindex="0"><code>...</code></pre>` &mdash; the `tabindex` lets keyboard users focus and scroll it when a long line overflows.
+- `date` is first publication; bump `last_modified_at` (an actual `YYYY-MM-DD` value, quotes optional) whenever a note gets a substantive edit. It drives the "Last updated" line, the sitemap and the structured data. Leave out `image` if the note has no illustration (the site default is used).
+- A copy-paste command, config snippet, or prompt goes in a code block (see below).
+- Use placeholders for anything personal in examples: `<your app id token>`, `acc_xxxx...`, `1111111`. Before publishing, grep the note for real account numbers, IDs, keys and names.
+- Test any script you publish (at least `python3 -m py_compile`, ideally an offline run with faked API responses) and say in a `recipe-note` what the published version leaves out compared with the one you actually run.
+
+### Code blocks and syntax highlighting
+
+```html
+<pre class="prompt-block" tabindex="0" data-lang="Python"><code class="language-python">print("hello")</code></pre>
+```
+
+- `tabindex="0"` lets keyboard users focus and scroll the block when a long line overflows.
+- `data-lang` is the label shown above the block (pure CSS, `.prompt-block[data-lang]::before`). Free text: `Python`, `Bash`, `Shell`, `Config`, `Proxmark3`.
+- `class="language-<id>"` on the `<code>` turns on highlighting. Ids in use: `python`, `bash` (also for `Shell` blocks), `ini` (Klipper/Snapmaker `.cfg`). Anything else in highlight.js's [common bundle](https://highlightjs.org/download) works without extra files (`json`, `yaml`, `javascript`, `xml` for HTML, ...).
+- Leave the class off for AI prompts and commands highlight.js has no grammar for (Proxmark3): they stay plain. Highlighting only runs on `pre code[class*="language-"]`, so untagged blocks are never auto-detected.
+- Escape the code: `<` `>` `&` must be `&lt;` `&gt;` `&amp;` inside `<pre>`. For a long script, generate the HTML with Python's `html.escape(code, quote=False)` rather than escaping by hand.
+- `_layouts/note.html` loads highlight.js 11.9.0 from cdnjs (with an SRI `integrity` hash) only when the page content contains `class="language-`. Recipes don't load it; copy the same block into `_layouts/recipe.html` if one ever needs it. To upgrade, change the version in the URL and recompute the hash: `curl -s <url> | openssl dgst -sha384 -binary | openssl base64 -A`, prefixed with `sha384-`.
+- Token colours are in `styles.css` (`.hljs-*` rules): keywords use `--accent`, comments `--text-muted`, strings and numbers `--code-string` / `--code-number`. Those two variables are defined in all four theme blocks (light, dark media query, forced light, forced dark); add new colours to all four or the manual theme toggle breaks them. No highlight.js theme stylesheet is loaded.
+- If cdnjs is down the code shows unhighlighted but readable.
+- Check both themes after a change. Headless Chrome is enough: `jekyll build`, `python3 -m http.server` in `_site`, then `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --window-size=900,2400 --virtual-time-budget=5000 --screenshot=out.png <url>` (add `--force-dark-mode --blink-settings=preferredColorScheme=0` for dark).
 
 ## Theme toggle
 
@@ -109,6 +139,17 @@ Every page follows system `prefers-color-scheme` by default, with a manual overr
 3. `<script src="js/theme.js"></script>` next to the `js/email.js` tag at the bottom of `<body>`.
 
 Anything that needs to invert between themes (line-drawing illustrations so far) should use `filter: invert(var(--invert))` rather than its own `prefers-color-scheme` media query, so it respects the manual override too.
+
+## SEO
+
+- `jekyll-seo-tag` (bundled with `github-pages`) is called as `{% seo title=false %}` in `_layouts/default.html`. It writes the meta description, canonical URL, Open Graph and Twitter tags, and JSON-LD. `title=false` because the layout writes its own `<title>` (`<page title> - Wilson Fan`; the homepage is `Wilson Fan: Notes on Software and Recipes`). Don't add another `<meta name="description">`.
+- `_config.yml` sets `author`, `locale: en_NZ`, a default `image` for every page, and `seo.type: BlogPosting` for both collections, so notes and recipes get article structured data with author, `datePublished` (`date`) and `dateModified` (`last_modified_at`).
+- `jekyll-sitemap` takes `lastmod` from `last_modified_at`, falling back to `date`. Without either it uses the build time, which changes on every deploy, and Google learns to ignore it. Every collection page needs both.
+- Share images are opaque copies in `images/social/<slug>.jpg`: the transparent PNGs render black-on-black on Facebook, LinkedIn and X. After adding an illustration, make one: composite the PNG on white and save as JPEG quality 85 (Pillow: `Image.new("RGBA", im.size, "white")`, `alpha_composite`, `convert("RGB")`).
+- Hub pages set `permalink: /notes.html` / `/recipes.html` so their canonical and sitemap URLs match the nav links; without it Jekyll gives them `/notes`. Any new top-level page needs the same.
+- Keep descriptions under about 155 characters; Google truncates longer ones.
+- Anything in the repo root that isn't site content goes in `exclude:` in `_config.yml` (currently `serve.sh` and the local Gemini key file), or Jekyll publishes it. A running `jekyll serve` doesn't reload `_config.yml`; restart it after config changes.
+- Check after a change: `grep -o 'rel="canonical"[^>]*' _site/<page>.html` and `grep -A1 '<loc>' _site/sitemap.xml`.
 
 ## Analytics
 

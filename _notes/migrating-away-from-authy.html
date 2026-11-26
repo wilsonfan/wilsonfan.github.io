@@ -2,11 +2,13 @@
 title: "Migrating Away from Authy"
 description: "Authy has no official export. Notes on getting your own TOTP secrets out via iOS + mitmproxy, or a rooted Android device."
 lede: "Authy has no official export button, so getting your own TOTP secrets out means intercepting its own API traffic. Both Android and iOS work; iOS with mitmproxy is the less painful route."
-updated: 2026-08-30
 order: 3
 thumb_alt: "Line drawing of a smartphone showing a one-time-password code beside a key"
 hub_blurb: "Authy has no export button &mdash; getting your own TOTP secrets out via iOS + mitmproxy, or a rooted Android device."
 intro: "Authy will happily hold your 2FA seeds hostage forever if you let it. There's no \"export\" anywhere in the app &mdash; every route out involves reading the encrypted token blob off the wire or off a rooted device, then decrypting it yourself with your backup password."
+date: 2026-08-30
+last_modified_at: 2026-08-30
+image: /images/social/migrating-away-from-authy.jpg
 ---
   <h2>Android options</h2>
   <p>If you've already got a rooted phone (or don't mind rooting an emulator), this avoids mitmproxy entirely:</p>
@@ -38,7 +40,7 @@ intro: "Authy will happily hold your 2FA seeds hostage forever if you let it. Th
 
   <h2>Viewing the tokens as QR codes</h2>
   <p>Once you have <code>decrypted_tokens.json</code>, this turns each secret back into a scannable QR code so you can re-enroll it in whatever authenticator app you're moving to:</p>
-  <pre class="prompt-block" tabindex="0"><code>Install ruby
+  <pre class="prompt-block" tabindex="0" data-lang="Shell"><code class="language-bash">Install ruby
 gem install rqrcode
 Save that script (call it authy_qr.rb) next to decrypted_tokens.json
 ruby authy_qr.rb</code></pre>

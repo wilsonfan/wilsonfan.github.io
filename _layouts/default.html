@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% if page.title %}{{ page.title }} - Wilson Fan{% else %}Wilson Fan{% endif %}</title>
-  <meta name="description" content="{{ page.description | default: site.description }}">
+  <title>{% if page.title %}{{ page.title }} - Wilson Fan{% else %}Wilson Fan: Notes on Software and Recipes{% endif %}</title>
+  {% seo title=false %}
   <meta name="color-scheme" content="light dark">
   <script>
     (function () {

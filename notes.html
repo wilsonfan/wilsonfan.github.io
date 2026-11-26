@@ -3,6 +3,7 @@ layout: default
 title: "Notes"
 description: "Write-ups on things Wilson built, broke, and eventually understood."
 nav: notes
+permalink: /notes.html
 ---
 <section class="stack-section page-section">
   <h1>Notes</h1>
@@ -13,10 +14,12 @@ nav: notes
     {% assign slug = item.url | remove: '/' | remove: '.html' %}
     <a class="item-list-row" href="{{ item.url | relative_url }}">
       <div class="item-list-thumb">
+        {% if item.thumb_alt %}
         <picture>
           <source srcset="{{ '/images/' | append: slug | append: '.webp' | relative_url }}" type="image/webp">
           <img src="{{ '/images/' | append: slug | append: '.png' | relative_url }}" alt="" width="1056" height="992">
         </picture>
+        {% endif %}
       </div>
       <div>
         {% if item.tag %}<span class="card-tag">{{ item.tag }}</span>{% endif %}

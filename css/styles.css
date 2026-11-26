@@ -21,6 +21,8 @@
   --text-muted: #5c5c5c;
   --border: #e7e3df;
   --accent: #a35a0a;
+  --code-string: #2f7a32;
+  --code-number: #1f5fa8;
   --radius: 12px;
   --invert: 0;
   --font-display: "Fraunces", Georgia, serif;
@@ -34,6 +36,8 @@
     --text-muted: #a3a3a3;
     --border: #262626;
     --accent: #e0932a;
+  --code-string: #9ccc84;
+  --code-number: #7fb4ec;
     --invert: 1;
   }
 }
@@ -46,6 +50,8 @@
   --text-muted: #5c5c5c;
   --border: #e7e3df;
   --accent: #a35a0a;
+  --code-string: #2f7a32;
+  --code-number: #1f5fa8;
   --invert: 0;
   color-scheme: light;
 }
@@ -57,6 +63,8 @@
   --text-muted: #a3a3a3;
   --border: #262626;
   --accent: #e0932a;
+  --code-string: #9ccc84;
+  --code-number: #7fb4ec;
   --invert: 1;
   color-scheme: dark;
 }
@@ -536,6 +544,23 @@ main {
   border-radius: var(--radius);
   overflow-x: auto;
 }
+
+.prompt-block[data-lang]::before {
+  content: attr(data-lang);
+  display: block;
+  margin-bottom: 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* highlight.js tokens; colours follow the theme variables */
+.hljs-keyword, .hljs-built_in, .hljs-selector-tag, .hljs-section { color: var(--accent); }
+.hljs-string, .hljs-regexp, .hljs-attr { color: var(--code-string); }
+.hljs-number, .hljs-literal, .hljs-variable, .hljs-template-variable { color: var(--code-number); }
+.hljs-comment, .hljs-meta { color: var(--text-muted); font-style: italic; }
+.hljs-title, .hljs-params { color: inherit; }
 
 .prompt-block code {
   display: block;

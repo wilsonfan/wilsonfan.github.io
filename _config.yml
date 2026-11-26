@@ -5,8 +5,12 @@ url: "https://wilson.fan"
 markdown: kramdown
 permalink: /:path.html
 
+author: Wilson Fan
+locale: en_NZ
+
 plugins:
   - jekyll-sitemap
+  - jekyll-seo-tag
 
 collections:
   recipes:
@@ -19,14 +23,22 @@ collections:
 defaults:
   - scope:
       path: ""
+    values:
+      image: /images/social/wilson_burger.jpg
+  - scope:
+      path: ""
       type: recipes
     values:
+      seo:
+        type: BlogPosting
       layout: recipe
       nav: recipes
   - scope:
       path: ""
       type: notes
     values:
+      seo:
+        type: BlogPosting
       layout: note
       nav: notes
 
@@ -35,3 +47,5 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - vendor
+  - serve.sh
+  - gemini_key_do_not_commit.txt
